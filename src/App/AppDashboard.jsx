@@ -19,8 +19,6 @@ function AppDashboard() {
     <div className="dashboard-container">
       <HeroSection userName={userName} />
       
-      <PopularJobtype theme="dark" />
-      
       <RecomendedJobsCrousel theme="dark" />
     </div>
   );
