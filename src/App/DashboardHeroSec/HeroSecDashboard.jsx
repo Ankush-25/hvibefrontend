@@ -8,7 +8,7 @@ import "./HeroSec.css";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PopularJobtype } from "../../landingpage/LandingPageUppersec/UpperSection/UpperSectionType/upperSecTypeParent";
-
+import {Imagepaths} from './../../assets/Global_Need_files/ImagesPaths.js'
 
 function HeroSection({ userName }) {
   const handleFindJobs = () => {
@@ -39,7 +39,7 @@ function HeroSection({ userName }) {
       </HeroSecbuttonCon>
 
       <HeroSecImage
-        src="/public/media/HeroSection Image.png"
+        src={Imagepaths.heroSectionImage}
         alt="Hero Section Image"
       />
     </HeroSecWrapper>

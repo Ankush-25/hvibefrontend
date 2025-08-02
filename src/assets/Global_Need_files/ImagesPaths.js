@@ -1,5 +1,6 @@
 export const Imagepaths = {
     HiringstoreslogoPath: "/Hiring_stores_logo.png",
+    heroSectionImage:"/HeroSection Image.png"
 }
 
 export const CompaniesLogoPaths={
