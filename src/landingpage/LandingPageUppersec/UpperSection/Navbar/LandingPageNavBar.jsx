@@ -75,7 +75,7 @@ export function LandingNavBar() {
     ];
 
     const userMenuItems = [
-        { label: 'My Profile', icon: faUserCog, action: () => navigate('/profile') },
+        { label: 'My Profile', icon: faUserCog, action: () => navigate('/app/profile') },
         { label: 'Saved Jobs', icon: faBookmark, action: () => navigate('/saved-jobs') },
         { label: 'My Applications', icon: faFileAlt, action: () => navigate('/applications') },
         { label: 'Dashboard', icon: faChartBar, action: () => navigate('/dashboard') },
@@ -149,7 +149,7 @@ export function LandingNavBar() {
                         <div style={{ position: 'relative' }}>
                             <UserProfile onClick={toggleUserDropdown}>
                                 <div className="user-avatar">
-                                    {currentUser.name?.[0]?.toUpperCase() || 'U'}
+                                    {Imagepaths?.globalProfileAvatar?(<img className='user-avatar' src={Imagepaths.globalProfileAvatar}/>):(currentUser.name[0].toUpperCase())}
                                 </div>
                                 <span className="user-name">{currentUser.name || 'User'}</span>
                             </UserProfile>

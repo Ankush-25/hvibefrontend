@@ -11,6 +11,7 @@ import AppDashboard from "./App/AppDashboard";
 import SearchResults from "./search/SearchResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import JobApplicationPage from "./pages/JobApplicationPage";
+import { Profile } from "./profile/profile";
 
 function App() {
   return (
@@ -30,14 +31,18 @@ function App() {
                 <Route path="/search-results" element={<SearchResults />} />
                 <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
                 <Route path="/*" element={<Error404 />} />
-                <Route 
-                  path="/app" 
+                <Route
+                  path="/app"
                   element={
                     <ProtectedRoute>
                       <AppDashboard />
                     </ProtectedRoute>
                   }
-                />
+                >
+                  <Route path="profile" element={<Profile />} />
+                  {/* You can add more nested routes like: */}
+                  {/* <Route path="settings" element={<Settings />} /> */}
+                </Route>
                 {/* <Route path="/app/JobPost" element={<AppDashboard />}/> */}
                 {/*<Route path="/Career" element={<LandingPageParent />} />
               // <Route path="/privacy-policy" element={<LandingPage/>} />

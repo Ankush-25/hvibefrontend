@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HeroSection from "./DashboardHeroSec/HeroSecDashboard";
-import { PopularJobtype } from "../landingpage/LandingPageUppersec/UpperSection/UpperSectionType/upperSecTypeParent";
 import RecomendedJobsCrousel from "./RecomendedJob";
 import { useAuth } from "../authContext";
 
@@ -18,7 +17,6 @@ function AppDashboard() {
   return (
     <div className="dashboard-container">
       <HeroSection userName={userName} />
-      
       <RecomendedJobsCrousel theme="dark" />
     </div>
   );

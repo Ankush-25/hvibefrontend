@@ -155,10 +155,11 @@ export const getCurrentUser = () => {
   }
   
   const userId = localStorage.getItem(USER_ID_KEY);
+  const authtoken = localStorage.getItem(TOKEN_KEY);
   const userDataString = localStorage.getItem(USER_DATA_KEY);
   
   return {
-    userId,
+    userId,authtoken,
     ...(userDataString ? JSON.parse(userDataString) : {})
   };
 };
