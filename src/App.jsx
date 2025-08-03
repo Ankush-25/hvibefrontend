@@ -1,7 +1,5 @@
 import { LandingPageParent } from "./landingpage/LandingPageParent";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LandingNavBar } from "./landingpage/LandingPageUppersec/UpperSection/Navbar/LandingPageNavBar";
-import { Footerbody } from "./landingpage/LandingPageLowersec/FooterSec";
 import SignUp from "./signUp/SignUP";
 import Blogs from "./Blogs/Blogs";
 import Error404 from "./Error404";
@@ -12,6 +10,7 @@ import SearchResults from "./search/SearchResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import JobApplicationPage from "./pages/JobApplicationPage";
 import { Profile } from "./profile/profile";
+import Layout from "./components/layout";
 
 function App() {
   return (
@@ -23,34 +22,29 @@ function App() {
           path="*"
           element={
             <>
-              <LandingNavBar />
               <Routes>
                 <Route path="/" element={<LandingPageParent />} />
                 <Route path="/Blogs" element={<Blogs />} />
                 <Route path="/aboutUs" element={<AboutUs />} />
                 <Route path="/search-results" element={<SearchResults />} />
                 <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
-                <Route path="/*" element={<Error404 />} />
+                <Route path="*" element={<Error404 />} />
+                <Route path="/Career" element={<LandingPageParent />} />
+                <Route path="/privacy-policy" element={<LandingPageParent/>} />
+                <Route path="/contact-Us" element={<LandingPageParent />} />
+                <Route path="/Browse_Jobs" element={<LandingPageParent />} />
                 <Route
                   path="/app"
                   element={
                     <ProtectedRoute>
-                      <AppDashboard />
+                      <Layout />
                     </ProtectedRoute>
                   }
                 >
+                  <Route index element={<AppDashboard />} />
                   <Route path="profile" element={<Profile />} />
-                  {/* You can add more nested routes like: */}
-                  {/* <Route path="settings" element={<Settings />} /> */}
                 </Route>
-                {/* <Route path="/app/JobPost" element={<AppDashboard />}/> */}
-                {/*<Route path="/Career" element={<LandingPageParent />} />
-              // <Route path="/privacy-policy" element={<LandingPage/>} />
-              // <Route path="/contact-Us" element={<LandingPageParent />} />
-              // <Route path="/Browse_Jobs" element={<LandingPageParent />} />
-              // <Route path="/" element={<LandingPageParent />} /> */}
               </Routes>
-              <Footerbody />
             </>
           }
         />

@@ -13,39 +13,34 @@ import {
 } from "./profilestyle.jsx";
 
 export function Profile() {
-  const { CurrentUser, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [userdetail, setuserdetail] = useState({})
-  console.log(CurrentUser)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${Api_url}/profile`, {
+        const userDetResponse = await axios.get(`${Api_url}/profile`, {
           headers: {
-            Authorization: `Bearer ${CurrentUser.authtoken}`
+            Authorization: `Bearer ${currentUser.authtoken}`
           },
         });
-        if (!response || response.length <= 0) {
+        if (!userDetResponse || userDetResponse.length <= 0) {
           throw new Error("response not found");
         }
-        console.log(response.data);
-        setuserdetail(response.data?.response || {});
+        console.log(userDetResponse.data.response);
+        setuserdetail(userDetResponse.data.response);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
     };
-
-    if (CurrentUser?.authtoken) {
       fetchProfile();
-    }
-  }, [CurrentUser]);
-  console.log(userdetail.name);
+  }, [currentUser]);
   return (
 
     <ProfileContainer>
       <ProfileHeader>
-        <ProfileImage src={Imagepaths.globalProfileAvatar}></ProfileImage>
-        <ProfileInfo>
-          <ProfileName>{userdetail.name}</ProfileName>
+      <ProfileImage src={userdetail.ProfileImage? userdetail.ProfileImage : Imagepaths.globalProfileAvatar}></ProfileImage>
+      <ProfileInfo>
+          <ProfileName>{userdetail.username}</ProfileName>
         </ProfileInfo>
       </ProfileHeader>
     </ProfileContainer>)
