@@ -16,40 +16,39 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<LandingPageParent />} />
+          <Route path="/Blogs" element={<Blogs />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/search-results" element={<SearchResults />} />
+          <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
+          <Route path="/Career" element={<LandingPageParent />} />
+          <Route path="/privacy-policy" element={<LandingPageParent />} />
+          <Route path="/contact-Us" element={<LandingPageParent />} />
+          <Route path="/Browse_Jobs" element={<LandingPageParent />} />
+        </Route>
+
+        {/* Protected routes */}
         <Route
-          path="*"
+          path="/app"
           element={
-            <>
-              <Routes>
-                <Route path="/" element={<LandingPageParent />} />
-                <Route path="/Blogs" element={<Blogs />} />
-                <Route path="/aboutUs" element={<AboutUs />} />
-                <Route path="/search-results" element={<SearchResults />} />
-                <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
-                <Route path="*" element={<Error404 />} />
-                <Route path="/Career" element={<LandingPageParent />} />
-                <Route path="/privacy-policy" element={<LandingPageParent/>} />
-                <Route path="/contact-Us" element={<LandingPageParent />} />
-                <Route path="/Browse_Jobs" element={<LandingPageParent />} />
-                <Route
-                  path="/app"
-                  element={
-                    <ProtectedRoute>
-                      <Layout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<AppDashboard />} />
-                  <Route path="profile" element={<Profile />} />
-                </Route>
-              </Routes>
-            </>
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AppDashboard />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+
+        {/* 404 route */}
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
 export default App;
