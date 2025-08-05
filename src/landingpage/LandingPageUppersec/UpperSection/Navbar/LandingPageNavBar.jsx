@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { 
+import {
   NavbarContainer,
   LogoSection,
   SearchSection,
@@ -11,7 +11,6 @@ import {
   NotificationBadge,
   UserProfile,
   ActionButtons,
-  PostJobButton,
   AuthButton,
   MobileMenuButton,
   DropdownMenu,
@@ -21,7 +20,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faSearch,
   faMapMarkerAlt,
-  faBriefcase,
   faBuilding,
   faUser,
   faGraduationCap,
@@ -70,8 +68,7 @@ export function LandingNavBar() {
 
     const menuItems = [
         { label: 'Companies', path: '/companies', icon: faBuilding },
-        { label: 'Career Guidance', path: '/career', icon: faGraduationCap },
-        { label: 'About', path: '/about', icon: faUser }
+        // { label: 'Career Guidance', path: '/career', icon: faGraduationCap },
     ];
 
     const userMenuItems = [

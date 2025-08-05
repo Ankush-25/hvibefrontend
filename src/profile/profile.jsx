@@ -100,6 +100,7 @@ export function Profile() {
         <ProfileInfo>
           <div>
             <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
+            <h2>{userDetail.Role}</h2>
             {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
           </div>
           <ProfileDetails>
