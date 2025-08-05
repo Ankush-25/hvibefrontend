@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
 import { Api_url } from "./../globalConfig.js";
-import "./profile.css";
 import axios from "axios";
-import { faEnvelope, faPhone, faMapPin, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faPhone,
+  faMapPin,
+  faPenToSquare,
+  faBriefcase,
+  faGraduationCap,
+  faCode,
+  faFilePdf
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   ProfileContainer,
@@ -17,73 +25,216 @@ import {
   ProfileBio,
   EditButton,
   ProfileImageContainer,
-  ProfileDetails
-} from "./profilestyle.jsx";
+  ProfileDetails,
+  Section,
+  Card
+} from "./profilestyle";
+
+const LoadingSpinner = () => (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '200px',
+    width: '100%'
+  }}>
+    <div style={{
+      width: '40px',
+      height: '40px',
+      border: '4px solid rgba(56, 151, 240, 0.2)',
+      borderTop: '4px solid #3897f0',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }}></div>
+  </div>
+);
 
 export function Profile() {
   const { currentUser, logout } = useAuth();
-  const [userdetail, setuserdetail] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [userDetail, setUserDetail] = useState({ profile: {} });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userDetResponse = await axios.get(`${Api_url}/profile`, {
-          headers: {
-            Authorization: `Bearer ${currentUser.authtoken}`
-          },
+        const { data } = await axios.get(`${Api_url}/profile`, {
+          headers: { Authorization: `Bearer ${currentUser?.authtoken}` }
         });
-        if (!userDetResponse || userDetResponse.length <= 0) {
-          throw new Error("Response not found");
+        if (data?.response) {
+          setUserDetail(data.response);
         }
-        setuserdetail(userDetResponse.data.response);
       } catch (error) {
         console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchProfile();
-  }, [currentUser]);
-  console.log(userdetail)
+
+    if (currentUser?.authtoken) {
+      fetchProfile();
+    }
+  }, [currentUser?.authtoken]);
+
+  const { profile = {} } = userDetail;
+  const { experience = [], education = [], skills = [] } = profile;
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <ProfileContainer>
       <ProfileHeader>
         <ProfileImageContainer>
           <ProfileImage
-            src={userdetail.ProfileImage || Imagepaths.globalProfileAvatar}
-            alt={userdetail.FullName || 'Profile'}
+            src={userDetail.ProfileImage || Imagepaths.globalProfileAvatar}
+            alt={userDetail.FullName || 'Profile'}
           />
           <EditButton>
             <FontAwesomeIcon icon={faPenToSquare} size={16} />
           </EditButton>
-          <ProfileUsername>@{userdetail.username || 'username'}</ProfileUsername>
+          <ProfileUsername>@{userDetail.username || 'username'}</ProfileUsername>
         </ProfileImageContainer>
+
 
         <ProfileInfo>
           <div>
-            <ProfileName>{userdetail.FullName || 'No Name'}</ProfileName>
-            {userdetail.bio && <ProfileBio>{userdetail.bio}</ProfileBio>}
+            <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
+            {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
           </div>
           <ProfileDetails>
-            {userdetail.email && (
+            {userDetail.email && (
               <ProfileDetail>
                 <FontAwesomeIcon icon={faEnvelope} />
-                <span>{userdetail.email}</span>
+                <span>{userDetail.email}</span>
               </ProfileDetail>
             )}
-            {userdetail.phone && (
+            {userDetail.phone && (
               <ProfileDetail>
                 <FontAwesomeIcon icon={faPhone} />
-                <span>{userdetail.phone}</span>
+                <span>{userDetail.phone}</span>
               </ProfileDetail>
             )}
-            {userdetail.location && (
+            {userDetail.location && (
               <ProfileDetail>
                 <FontAwesomeIcon icon={faMapPin} />
-                <span>{userdetail.location}</span>
+                <span>{userDetail.location}</span>
               </ProfileDetail>
             )}
           </ProfileDetails>
         </ProfileInfo>
       </ProfileHeader>
+
+      <Section>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <FontAwesomeIcon icon={faBriefcase} style={{ color: '#3897f0' }} />
+          <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Experience</h2>
+        </div>
+        {experience?.length > 0 ? (
+          experience.map((exp, index) => (
+            <Card key={index}>
+              <h3 style={{ margin: '0 0 0.5rem 0', color: '#ffffff' }}>{exp.title}</h3>
+              <div style={{ display: 'flex', gap: '1rem', color: '#b0b0b0', marginBottom: '0.5rem' }}>
+                <span>{exp.company}</span>
+                <span>•</span>
+                <span>{exp.duration}</span>
+              </div>
+              {exp.description && (
+                <p style={{ margin: '0.5rem 0 0 0', color: '#d0d0d0' }}>{exp.description}</p>
+              )}
+            </Card>
+          ))
+        ) : (
+          <p style={{ color: '#999', fontStyle: 'italic' }}>No experience added yet</p>
+        )}
+      </Section>
+
+      <Section>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#3897f0' }} />
+          <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Education</h2>
+        </div>
+        {education?.length > 0 ? (
+          education.map((edu, index) => (
+            <Card key={index}>
+              <h3 style={{ margin: '0 0 0.5rem 0', color: '#ffffff' }}>{edu.degree}</h3>
+              <div style={{ display: 'flex', gap: '1rem', color: '#b0b0b0', marginBottom: '0.5rem' }}>
+                <span>{edu.institution}</span>
+                {edu.year && (
+                  <>
+                    <span>•</span>
+                    <span>{edu.year}</span>
+                  </>
+                )}
+              </div>
+            </Card>
+          ))
+        ) : (
+          <p style={{ color: '#999', fontStyle: 'italic' }}>No education information added yet</p>
+        )}
+      </Section>
+
+      <Section>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <FontAwesomeIcon icon={faCode} style={{ color: '#3897f0' }} />
+          <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Skills</h2>
+        </div>
+        {skills?.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+            {skills.map((skill, index) => (
+              <span
+                key={index}
+                style={{
+                  background: 'rgba(56, 151, 240, 0.1)',
+                  color: '#5fb0ff',
+                  padding: '0.4rem 0.9rem',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  transition: 'all 0.2s ease',
+                  border: '1px solid rgba(56, 151, 240, 0.2)'
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p style={{ color: '#999', fontStyle: 'italic' }}>No skills added yet</p>
+        )}
+      </Section>
+
+      {userDetail.resume && (
+        <Section>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <FontAwesomeIcon icon={faFilePdf} style={{ color: '#3897f0' }} />
+            <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Resume</h2>
+          </div>
+          <a
+            href={userDetail.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#3897f0',
+              textDecoration: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: '1px solid #2d2d2d',
+              transition: 'all 0.2s ease',
+              marginTop: '1rem',
+              ':hover': {
+                backgroundColor: 'rgba(56, 151, 240, 0.1)',
+                borderColor: '#3897f0'
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faFilePdf} />
+            View Resume
+          </a>
+        </Section>
+      )}
     </ProfileContainer>
-  )
+  );
 }

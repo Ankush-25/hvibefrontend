@@ -151,7 +151,6 @@ export function LandingNavBar() {
                                 <div className="user-avatar">
                                     {Imagepaths?.globalProfileAvatar?(<img className='user-avatar' src={Imagepaths.globalProfileAvatar}/>):(currentUser.name[0].toUpperCase())}
                                 </div>
-                                <span className="user-name">{currentUser.name || 'User'}</span>
                             </UserProfile>
 
                             {showUserDropdown && (
