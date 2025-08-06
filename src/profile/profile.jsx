@@ -75,6 +75,7 @@ export function Profile() {
     }
   }, [currentUser?.authtoken]);
 
+    console.log(userDetail)
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
 
