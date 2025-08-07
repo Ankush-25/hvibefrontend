@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
-import { Api_url } from "./../globalConfig.js";
-import axios from "axios";
+import {useSelector, useDispatch } from "react-redux";
+import { fetchProfile } from "../redux/profileSlice.js";
 import {
   faEnvelope,
   faPhone,
@@ -52,30 +52,22 @@ const LoadingSpinner = () => (
 export function Profile() {
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [userDetail, setUserDetail] = useState({ profile: {} });
+  const dispatch = useDispatch();
+  const userDetail = useSelector((state)=>state.usrProfile);
+  console.log(userDetail)
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data } = await axios.get(`${Api_url}/profile`, {
-          headers: { Authorization: `Bearer ${currentUser?.authtoken}` }
-        });
-        if (data?.response) {
-          setUserDetail(data.response);
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      } finally {
-        setLoading(false);
+    try {
+      if (currentUser?.authtoken) {
+        dispatch(fetchProfile());
       }
-    };
-
-    if (currentUser?.authtoken) {
-      fetchProfile();
+    } catch (error) {
+      console.error("Failed to Fetch User Profile",error)
+    }finally{
+      setLoading(false);
     }
-  }, [currentUser?.authtoken]);
+  }, [currentUser?.authtoken,dispatch]);
 
-    console.log(userDetail)
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
 

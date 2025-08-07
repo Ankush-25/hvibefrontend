@@ -3,13 +3,13 @@ import axios from "axios";
 import { Api_url } from "../globalConfig";
 
 
-const fetchProfile = createAsyncThunk("usrProfile/fetchProfile", async (thunkAPI) => {
+export const fetchProfile = createAsyncThunk("usrProfile/fetchProfile", async (_,thunkAPI) => {
     const authtoken = localStorage.getItem("token");
     try {
-        const response = await axios.get(`${Api_url}/profile`, {
+        const res = await axios.get(`${Api_url}/profile`, {
             headers: { Authorization: `Bearer ${authtoken}` }
         });
-        return response.data;
+        return res.data.response;
     } catch (error) {
         return thunkAPI.rejectWithValue(error);
     }
@@ -64,6 +64,21 @@ const usrProfileSlice = createSlice({
         clearProfile:()=>{
             return initialState;
         }
+    },
+    extraReducers:(builder)=>{
+        builder.addCase(fetchProfile.pending,(state)=>{
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchProfile.fulfilled,(state,action)=>{
+            state.loading = false;
+            Object.assign(state,action.payload)
+
+        })
+        .addCase(fetchProfile.rejected,(state,action)=>{
+            state.loading = false;
+            state.error = action.payload||"Failed to fetch profile";
+        })
     }
 })
  
@@ -74,7 +89,6 @@ export const {
     clearProfile,
     updateFields,
     updateNestedFields,
-
 } = usrProfileSlice.actions;
 
 export default usrProfileSlice.reducer;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   NavbarContainer,
   LogoSection,
@@ -38,14 +39,13 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../../authContext";
 import { Imagepaths } from "../../../../../src/assets/Global_Need_files/ImagesPaths";
-
 export function LandingNavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [locationInput, setLocationInput] = useState('');
     const [notifications] = useState(5);
-    
+    const userAvtar = useSelector((state)=>(state.usrProfile?.ProfileImage))
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
     const { pathname } = useLocation();
@@ -80,7 +80,7 @@ export function LandingNavBar() {
     ];
 
     const shouldShowSearch = !['/', '/home'].includes(pathname);
-
+    console.log(userAvtar)
     return (
         <NavbarContainer>
             <LogoSection onClick={() => navigate('/')}>
@@ -146,7 +146,7 @@ export function LandingNavBar() {
                         <div style={{ position: 'relative' }}>
                             <UserProfile onClick={toggleUserDropdown}>
                                 <div className="user-avatar">
-                                    {Imagepaths?.globalProfileAvatar?(<img className='user-avatar' src={Imagepaths.globalProfileAvatar}/>):(currentUser.name[0].toUpperCase())}
+                                    <img className='user-avatar' src={userAvtar||Imagepaths.globalProfileAvatar}/>
                                 </div>
                             </UserProfile>
 

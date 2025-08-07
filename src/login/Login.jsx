@@ -3,23 +3,29 @@ import "./login.css";
 import { useState } from "react";
 import { useAuth } from "../authContext";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchProfile } from "../redux/profileSlice";
+import { useSelector } from "react-redux";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
   const { login } = useAuth();
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
     setIsLoading(true);
-    
+
     try {
       await login(email, password);
+      console.log("deta feeding in redux");
+      await dispatch(fetchProfile()).unwrap();
+      console.log("Data Feeded in Redux");
       navigate('/app');
     } catch (error) {
       console.error("Login Failed:", error);
@@ -32,7 +38,8 @@ function Login() {
       setIsLoading(false);
     }
   };
-
+  const userProfile = useSelector((state) => state.usrProfile)
+  console.log(userProfile)
   return (
     <div className="LoginContainer">
       <div className="topSectionLogin">
@@ -44,13 +51,13 @@ function Login() {
         <p id="txtWelcome">Welcome Back</p>
         <p className="subtitle">Sign in to continue</p>
       </div>
-      
+
       {errorMessage && (
         <div className="error-message">
           {errorMessage}
         </div>
       )}
-      
+
       <form className="LoginForm" onSubmit={handleSubmit}>
         <div className="FormGroup">
           <input
@@ -65,7 +72,7 @@ function Login() {
           <label htmlFor="email">Email Address</label>
           <div className="inputHighlight"></div>
         </div>
-        
+
         <div className="FormGroup">
           <input
             type="password"
@@ -79,9 +86,9 @@ function Login() {
           <label htmlFor="password">Password</label>
           <div className="inputHighlight"></div>
         </div>
-        
-        <button 
-          className={`LoginButton ${isLoading ? 'loading' : ''}`} 
+
+        <button
+          className={`LoginButton ${isLoading ? 'loading' : ''}`}
           type="submit"
           disabled={isLoading}
         >
@@ -89,11 +96,11 @@ function Login() {
           <div className="buttonHighlight"></div>
         </button>
       </form>
-      
+
       <a href="/Reset-password" className="forgotPassword">
         Forgot Password?
       </a>
-      
+
       <div className="signUp">
         <p className="SignupTxt">
           Don't have an account?
@@ -103,7 +110,7 @@ function Login() {
           </a>
         </p>
       </div>
-      
+
       <div className="brandMessage">
         <p>Elevate your hiring experience</p>
       </div>
