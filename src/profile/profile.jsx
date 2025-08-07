@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
-import {useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchProfile } from "../redux/profileSlice.js";
 import {
   faEnvelope,
@@ -27,33 +27,28 @@ import {
   ProfileImageContainer,
   ProfileDetails,
   Section,
-  Card
+  Card,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  LoadingSpinnercontainer,
+  LoadingDiv
 } from "./profilestyle";
 
 const LoadingSpinner = () => (
-  <div style={{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '200px',
-    width: '100%'
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: '4px solid rgba(56, 151, 240, 0.2)',
-      borderTop: '4px solid #3897f0',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite'
-    }}></div>
-  </div>
+  <LoadingSpinnercontainer>
+    <LoadingDiv />
+  </LoadingSpinnercontainer>
 );
+
+
 
 export function Profile() {
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const userDetail = useSelector((state)=>state.usrProfile);
+  const userDetail = useSelector((state) => state.usrProfile);
   console.log(userDetail)
 
   useEffect(() => {
@@ -62,11 +57,10 @@ export function Profile() {
         dispatch(fetchProfile());
       }
     } catch (error) {
-      console.error("Failed to Fetch User Profile",error)
-    }finally{
-      setLoading(false);
+      console.error("Failed to Fetch User Profile", error)
+    } finally {
     }
-  }, [currentUser?.authtoken,dispatch]);
+  }, [currentUser?.authtoken, dispatch]);
 
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
@@ -74,6 +68,23 @@ export function Profile() {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    console.log("Edit button clicked");
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log("Form submitted");
+    setIsModalOpen(false);
+  };
 
   return (
     <ProfileContainer>
@@ -83,13 +94,54 @@ export function Profile() {
             src={userDetail.ProfileImage || Imagepaths.globalProfileAvatar}
             alt={userDetail.FullName || 'Profile'}
           />
-          <EditButton>
+          <EditButton onClick={handleEdit}>
             <FontAwesomeIcon icon={faPenToSquare} size={16} />
           </EditButton>
+          {isModalOpen && (
+            <ModalOverlay onClick={handleCloseModal}>
+              <ModalContent onClick={e => e.stopPropagation()}>
+                <ModalHeader>
+                  <h2>Edit Profile</h2>
+                  <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
+                </ModalHeader>
+                <form onSubmit={handleSubmit}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Full Name</label>
+                    <input
+                      type="text"
+                      defaultValue={userDetail.FullName || ''}
+                      style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
+                    <input
+                      type="email"
+                      defaultValue={userDetail.email || ''}
+                      style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      style={{ padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid #ddd', background: 'white', cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      style={{ padding: '0.5rem 1.5rem', borderRadius: '4px', border: 'none', background: '#007bff', color: 'white', cursor: 'pointer' }}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </ModalContent>
+            </ModalOverlay>
+          )}
           <ProfileUsername>@{userDetail.username || 'username'}</ProfileUsername>
         </ProfileImageContainer>
-
-
         <ProfileInfo>
           <div>
             <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>

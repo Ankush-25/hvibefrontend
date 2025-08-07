@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUpRightFromSquare,
-  faBuilding,
-  faMapMarkerAlt,
-  faFilter,
-  faSearch,
-  faArrowLeft,
-} from '@fortawesome/free-solid-svg-icons';
-import '../App/App.css';
+import { faUpRightFromSquare, faBuilding, faMapMarkerAlt, faFilter, faSearch, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './SearchResults.css';
 
 const SearchResults = () => {

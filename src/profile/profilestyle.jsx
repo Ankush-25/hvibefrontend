@@ -272,7 +272,7 @@ export const LoadingSpinner = styled.div`
   }
 `;
 
- export const EmptyMessage = styled.p`
+export const EmptyMessage = styled.p`
   color: #a0a0ff;
   text-align: center;
   font-style: italic;
@@ -281,3 +281,63 @@ export const LoadingSpinner = styled.div`
   border-radius: 10px;
 `;
 
+export const LoadingSpinnercontainer = styled.div`
+  display: flex;
+  justifyContent: center;
+  alignItems: center;
+  minHeight: 200px;
+  width: 100%;
+`
+export const LoadingDiv = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(56, 151, 240, 0.2);
+  borderTop: 4px solid #3897f0;
+  borderRadius:50%;
+  animation: spin 0.2s linear infinite;
+`
+
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+`;
+
+export const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+`;
+
+export const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  
+  &:hover {
+    color: #333;
+  }
+`;

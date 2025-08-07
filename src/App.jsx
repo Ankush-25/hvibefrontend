@@ -6,7 +6,7 @@ import Error404 from "./Error404";
 import AboutUs from "./aboutPage/AboutUs";
 import Login from "./login/Login";
 import AppDashboard from "./App/AppDashboard";
-import SearchResults from "./search/SearchResults";
+import SearchResults from "./landingpage/LandingPageUppersec/UpperSection/UpperSectionSearchFeature/SearchResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import JobApplicationPage from "./pages/JobApplicationPage";
 import { Profile } from "./profile/profile";
