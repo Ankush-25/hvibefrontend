@@ -281,21 +281,27 @@ export const EmptyMessage = styled.p`
   border-radius: 10px;
 `;
 
-export const LoadingSpinnercontainer = styled.div`
+export const LoadingSpinnerContainer = styled.div`
   display: flex;
-  justifyContent: center;
-  alignItems: center;
-  minHeight: 200px;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
   width: 100%;
-`
+`;
+
 export const LoadingDiv = styled.div`
   width: 40px;
   height: 40px;
   border: 4px solid rgba(56, 151, 240, 0.2);
-  borderTop: 4px solid #3897f0;
-  borderRadius:50%;
+  border-top: 4px solid #3897f0;
+  border-radius: 50%;
   animation: spin 0.2s linear infinite;
-`
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
 
 
 export const ModalOverlay = styled.div`
@@ -339,5 +345,69 @@ export const CloseButton = styled.button`
   
   &:hover {
     color: #333;
+  }
+`;
+
+export const FormGroup = styled.div`
+  margin-bottom: 1rem;
+`;
+
+export const FormLabel = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+`;
+
+export const FormInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+`;
+
+export const FormActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+export const Button = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+`;
+
+export const CancelButton = styled(Button)`
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+`;
+
+export const SubmitButton = styled(Button)`
+  padding: 0.5rem 1.5rem;
+  border: none;
+  background: #007bff;
+  color: white;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
   }
 `;

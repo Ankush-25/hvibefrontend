@@ -1,0 +1,85 @@
+/* UserForm.css */
+
+.form-container {
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .cancel-btn {
+    border: 1px solid #ddd;
+    background-color: white;
+    color: #333;
+  }
+  
+  .submit-btn {
+    border: none;
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1.5rem;
+  }
+  .profile-name{
+    font-size: 2.2rem;
+    border: none;
+    border-bottom: 1px solid grey;
+    background-color: #2c2c2c;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #ffffff; 
+    
+    &:hover{
+    border-color: 1px solid grey;
+    }
+    @media (max-width: 768px) {
+      font-size: 1.8rem;
+    }
+  }
+  .profile-bio{
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 1rem 0 0 0;
+    background-color: #2c2c2c;
+    color: #d0d0d0;
+    max-width: 800px;
+    word-wrap: break-word;
+    height: 100px;
+    overflow-y: scroll;
+  }
+  .edit-mode{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    background-color: #2c2c2c;
+    
+  }

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProfile } from "../redux/profileSlice.js";
+import { fetchProfile, updateFields } from "../redux/profileSlice.js";
+import './profile.css';
 import {
   faEnvelope,
   faPhone,
@@ -11,6 +12,7 @@ import {
   faBriefcase,
   faGraduationCap,
   faCode,
+  faPencil,
   faFilePdf
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,21 +33,21 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  LoadingSpinnercontainer,
-  LoadingDiv
+  LoadingSpinnerContainer,
+  LoadingDiv,
+  CloseButton
 } from "./profilestyle";
 
 const LoadingSpinner = () => (
-  <LoadingSpinnercontainer>
+  <LoadingSpinnerContainer>
     <LoadingDiv />
-  </LoadingSpinnercontainer>
+  </LoadingSpinnerContainer>
 );
-
-
 
 export function Profile() {
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [editMode, setEditMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.usrProfile);
@@ -59,8 +61,9 @@ export function Profile() {
     } catch (error) {
       console.error("Failed to Fetch User Profile", error)
     } finally {
+      setLoading(false);
     }
-  }, [currentUser?.authtoken, dispatch]);
+  }, [currentUser?.authtoken,dispatch]);
 
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
@@ -69,7 +72,7 @@ export function Profile() {
     return <LoadingSpinner />;
   }
 
-  const handleEdit = (e) => {
+  const handleEditProfilePhoto = (e) => {
     e.stopPropagation();
     console.log("Edit button clicked");
     setIsModalOpen(true);
@@ -78,7 +81,10 @@ export function Profile() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
+  const handleEditProfileInfo = () => {
+    console.log("Edit button clicked");
+    setEditMode(true);
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here
@@ -94,7 +100,7 @@ export function Profile() {
             src={userDetail.ProfileImage || Imagepaths.globalProfileAvatar}
             alt={userDetail.FullName || 'Profile'}
           />
-          <EditButton onClick={handleEdit}>
+          <EditButton onClick={handleEditProfilePhoto}>
             <FontAwesomeIcon icon={faPenToSquare} size={16} />
           </EditButton>
           {isModalOpen && (
@@ -104,34 +110,34 @@ export function Profile() {
                   <h2>Edit Profile</h2>
                   <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
                 </ModalHeader>
-                <form onSubmit={handleSubmit}>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Full Name</label>
+                <form onSubmit={handleSubmit} className="form-container">
+                  <div className="form-group">
+                    <label className="form-label">Full Name</label>
                     <input
                       type="text"
                       defaultValue={userDetail.FullName || ''}
-                      style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                      className="form-input"
                     />
                   </div>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
+                  <div className="form-group">
+                    <label className="form-label">Email</label>
                     <input
                       type="email"
                       defaultValue={userDetail.email || ''}
-                      style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                      className="form-input"
                     />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
+                  <div className="form-actions">
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      style={{ padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid #ddd', background: 'white', cursor: 'pointer' }}
+                      className="btn cancel-btn"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      style={{ padding: '0.5rem 1.5rem', borderRadius: '4px', border: 'none', background: '#007bff', color: 'white', cursor: 'pointer' }}
+                      className="btn submit-btn"
                     >
                       Save Changes
                     </button>
@@ -143,11 +149,35 @@ export function Profile() {
           <ProfileUsername>@{userDetail.username || 'username'}</ProfileUsername>
         </ProfileImageContainer>
         <ProfileInfo>
-          <div>
-            <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
-            <h2>{userDetail.Role}</h2>
-            {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
-          </div>
+        {editMode ? (
+            <div className="edit-mode">
+              <div style={{display: 'flex'}}>
+              <h3 style={{marginRight: '1rem'}}>Name</h3>
+              <input type="text" className="profile-name"
+                value={userDetail.FullName}
+                onChange={(e) => (dispatch(updateFields({ field: 'FullName', value: e.target.value })))}/>
+              </div>
+              <div style={{display: 'flex'}}>
+              <h3 style={{marginRight: '1rem'}}>Role</h3>
+              <input type="text"
+                value={userDetail.Role}
+                onChange={(e) => (dispatch(updateFields({ field: 'Role', value: e.target.value })))}/>
+              </div>
+              <div style={{display: 'flex'}}>
+              <h3 style={{marginRight: '1rem'}}>Bio</h3>
+              <input type="text" className="profile-bio"
+                value={userDetail.bio}
+                onChange={(e) => (dispatch(updateFields({ field: 'bio', value: e.target.value })))} />
+              </div>
+            </div>
+          ) :
+            <div>
+              <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
+              <h2>{userDetail.Role}</h2>
+              {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
+            </div>
+          }
+
           <ProfileDetails>
             {userDetail.email && (
               <ProfileDetail>
@@ -168,7 +198,14 @@ export function Profile() {
               </ProfileDetail>
             )}
           </ProfileDetails>
+          <EditButton onClick={handleEditProfileInfo}>
+            <FontAwesomeIcon icon={faPencil} />
+          </EditButton>
+
         </ProfileInfo>
+        <EditButton onClick={handleEditProfileInfo}>
+          <FontAwesomeIcon icon={faPencil} />
+        </EditButton>
       </ProfileHeader>
 
       <Section>
