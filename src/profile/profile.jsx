@@ -84,13 +84,13 @@ export function Profile() {
   const handleEditProfileInfo = () => {
     console.log("Edit button clicked");
     setEditMode(true);
-  }
+      }
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here
     console.log("Form submitted");
     setIsModalOpen(false);
-  };
+    };
 
   return (
     <ProfileContainer>
@@ -148,7 +148,7 @@ export function Profile() {
           )}
           <ProfileUsername>@{userDetail.username || 'username'}</ProfileUsername>
         </ProfileImageContainer>
-        <ProfileInfo>
+      <ProfileInfo>
         {editMode ? (
             <div className="edit-mode">
               <div style={{display: 'flex'}}>
