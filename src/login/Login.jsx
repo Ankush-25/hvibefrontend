@@ -70,7 +70,7 @@ function Login() {
             disabled={isLoading}
           />
           <label htmlFor="email">Email Address</label>
-          <div className="inputHighlight"></div>
+          <div climage aassName="inputHighlight"></div>
         </div>
 
         <div className="FormGroup">

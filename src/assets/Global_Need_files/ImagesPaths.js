@@ -1,30 +1,30 @@
 export const Imagepaths = {
-    HiringstoreslogoPath: "/Hiring_stores_logo.png",
-    heroSectionImage:"/HeroSection Image.png",
+    HiringstoreslogoPath: "/media/Hiring_stores_logo.png",
+    heroSectionImage:"/media/HeroSection Image.png",
     globalProfileAvatar:"/media/Avatar.jpg"
 }
 
 export const CompaniesLogoPaths={
-    Accenture: "/Accenture.png",
-    Amazon: "/Amazon.png",
-    Apple: "/Apple.png",
-    Google: "/Google.png",
-    IBM: "/IBM.png",
-    Meta: "/Meta.png",
-    Microsoft: "/Microsoft.png",
-    Netflix: "/Netflix.png",
-    Nvidia: "/Nvidia.png",
+    Accenture: "/media/Accenture.png",
+    Amazon: "/media/Amazon.png",
+    Apple: "/media/Apple.png",
+    Google: "/media/Google.png",
+    IBM: "/media/IBM.png",
+    Meta: "/media/Meta.png",
+    Microsoft: "/media/Microsoft.png",
+    Netflix: "/media/Netflix.png",
+    Nvidia: "/media/Nvidia.png",
 }
 
 export const SecondCompaniesLogoPaths = {
-    Salesforce: "/salesforce.png",
-    Oracle: "/oracle.png",
-    Adobe: "/Adobe.png",
-    Intel: "/intel.svg",
-    Cisco: "/cisco.jpeg",
-    SAP: "/sap.png",
-    Dropbox: "/dropbox.png",
-    Spotify: "/spotify.png",
-    Tcs: "/tcs.png",
+    Salesforce: "/media/salesforce.png",
+    Oracle: "/media/oracle.png",
+    Adobe: "/media/Adobe.png",
+    Intel: "/media/intel.svg",
+    Cisco: "/media/cisco.jpeg",
+    SAP: "/media/sap.png",
+    Dropbox: "/media/dropbox.png",
+    Spotify: "/media/spotify.png",
+    Tcs: "/media/tcs.png",
 };
   
