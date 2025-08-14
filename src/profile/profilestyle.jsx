@@ -59,7 +59,7 @@ export const ProfileImage = styled.div`
 
 export const EditButton = styled.button`
   position: absolute;
-  bottom: 52px;
+  bottom: 88px;
   right: 10px;
   background: #6366f1;
   color: white;
@@ -318,20 +318,20 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
+    background: #2c2c2c;
+    padding: 10px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 55%;
+    max-height: 80vh;
+    overflow-y: auto;
 `;
 
 export const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 10px;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid #eee;
 `;

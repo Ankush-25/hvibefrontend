@@ -1,85 +1,165 @@
-/* UserForm.css */
-
 .form-container {
-    width: 100%;
-  }
+  width: 90%;
+  margin-left: 10px;
+  padding: 22px 10px 10px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-group {
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.form-input {
+  width: 90%;
+  padding: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #3c3c3c;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3897f0;
+  box-shadow: 0 0 0 2px rgba(56, 151, 240, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #444;
+}
+
+.btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: #444;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+.cancel-btn:hover {
+  background-color: #555;
+}
+
+.submit-btn {
+  background-color: #3897f0;
+  color: white;
+  border: none;
+}
+
+.submit-btn:hover {
+  background-color: #2680e0;
+}
+
+/* Modal enhancements */
+.ModalOverlay {
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px);
+}
+
+.ModalContent {
+  background: #2c2c2c !important;
+  border-radius: 12px !important;
+  border: 1px solid #444 !important;
+  max-width: 600px !important;
+  width: 90% !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ModalHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid #444;
+}
+
+.ModalHeader h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.CloseButton {
+  color: #999;
+  font-size: 1.8rem;
+  transition: all 0.2s ease;
+}
+
+.CloseButton:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* Profile enhancements */
+.ProfileHeader {
+  position: relative;
+}
+
+.ProfileInfo {
+  flex-grow: 1;
+}
+
+/* Edit mode styling */
+.edit-mode .profile-name,
+.edit-mode .profile-bio {
+  background-color: #3c3c3c;
+  border: 1px solid #444;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.edit-mode .profile-name:focus,
+.edit-mode .profile-bio:focus {
+  outline: none;
+  border-color: #3897f0;
+}
+
+.profile-name {
+  font-size: 2.2rem;
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff; 
   
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    font-size: 1rem;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
-  .cancel-btn {
-    border: 1px solid #ddd;
-    background-color: white;
-    color: #333;
-  }
-  
-  .submit-btn {
-    border: none;
-    background-color: #007bff;
-    color: white;
-    padding: 0.5rem 1.5rem;
-  }
-  .profile-name{
-    font-size: 2.2rem;
-    border: none;
-    border-bottom: 1px solid grey;
-    background-color: #2c2c2c;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: #ffffff; 
-    
-    &:hover{
+  &:hover{
     border-color: 1px solid grey;
-    }
-    @media (max-width: 768px) {
-      font-size: 1.8rem;
-    }
   }
-  .profile-bio{
-    font-size: 1rem;
-    line-height: 1.7;
-    margin: 1rem 0 0 0;
-    background-color: #2c2c2c;
-    color: #d0d0d0;
-    max-width: 800px;
-    word-wrap: break-word;
-    height: 100px;
-    overflow-y: scroll;
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
   }
-  .edit-mode{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-    background-color: #2c2c2c;
-    
-  }
+}
+
+.profile-bio {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 1rem 0 0 0;
+  background-color: transparent;
+  color: #d0d0d0;
+  max-width: 800px;
+  word-wrap: break-word;
+}

@@ -48,7 +48,6 @@ export function Profile() {
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.usrProfile);
   console.log(userDetail)
@@ -63,7 +62,7 @@ export function Profile() {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.authtoken,dispatch]);
+  }, [currentUser?.authtoken, dispatch]);
 
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
@@ -75,22 +74,85 @@ export function Profile() {
   const handleEditProfilePhoto = (e) => {
     e.stopPropagation();
     console.log("Edit button clicked");
-    setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseEdit = () => {
+    setEditMode(false);
   };
   const handleEditProfileInfo = () => {
     console.log("Edit button clicked");
     setEditMode(true);
-      }
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here
+
+
+    // redux save option and then api call
     console.log("Form submitted");
-    setIsModalOpen(false);
+    setEditMode(false);
+  };
+
+  function EditComp({ editfields, usereditDetail }) {
+    const [editDetail, setEditDetail] = useState(editfields);
+
+
+
+    const handleCloseEdit = () => {
+      setEditMode(false);
     };
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      // Handle form submission here
+
+
+      // redux save option and then api call
+      console.log("Form submitted");
+      setEditMode(false);
+    };
+
+    return (
+      <ModalOverlay onClick={handleCloseEdit}>
+        <ModalContent onClick={e => e.stopPropagation()}>
+          <ModalHeader>
+            <h2>Edit Profile</h2>
+            <CloseButton onClick={handleCloseEdit}>&times;</CloseButton>
+          </ModalHeader>
+          <form onSubmit={handleSubmit} className="form-container">
+            {editDetail.map((field, index) => (
+              <div className="form-group" key={index}>
+                <label className="form-label">{field.label}</label>
+                <input
+                  type="text"
+                  defaultValue={usereditDetail[field.key] || ''}
+                  className="form-input"
+                />
+              </div>
+            ))}
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={handleCloseEdit}
+                className="btn cancel-btn"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn submit-btn"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </ModalContent>
+      </ModalOverlay>
+    )
+  }
+
+
+
+
 
   return (
     <ProfileContainer>
@@ -103,101 +165,43 @@ export function Profile() {
           <EditButton onClick={handleEditProfilePhoto}>
             <FontAwesomeIcon icon={faPenToSquare} size={16} />
           </EditButton>
-          {isModalOpen && (
-            <ModalOverlay onClick={handleCloseModal}>
-              <ModalContent onClick={e => e.stopPropagation()}>
-                <ModalHeader>
-                  <h2>Edit Profile</h2>
-                  <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
-                </ModalHeader>
-                <form onSubmit={handleSubmit} className="form-container">
-                  <div className="form-group">
-                    <label className="form-label">Full Name</label>
-                    <input
-                      type="text"
-                      defaultValue={userDetail.FullName || ''}
-                      className="form-input"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Email</label>
-                    <input
-                      type="email"
-                      defaultValue={userDetail.email || ''}
-                      className="form-input"
-                    />
-                  </div>
-                  <div className="form-actions">
-                    <button
-                      type="button"
-                      onClick={handleCloseModal}
-                      className="btn cancel-btn"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn submit-btn"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
-                </form>
-              </ModalContent>
-            </ModalOverlay>
-          )}
           <ProfileUsername>@{userDetail.username || 'username'}</ProfileUsername>
         </ProfileImageContainer>
-      <ProfileInfo>
-        {editMode ? (
-            <div className="edit-mode">
-              <div style={{display: 'flex'}}>
-              <h3 style={{marginRight: '1rem'}}>Name</h3>
-              <input type="text" className="profile-name"
-                value={userDetail.FullName}
-                onChange={(e) => (dispatch(updateFields({ field: 'FullName', value: e.target.value })))}/>
-              </div>
-              <div style={{display: 'flex'}}>
-              <h3 style={{marginRight: '1rem'}}>Role</h3>
-              <input type="text"
-                value={userDetail.Role}
-                onChange={(e) => (dispatch(updateFields({ field: 'Role', value: e.target.value })))}/>
-              </div>
-              <div style={{display: 'flex'}}>
-              <h3 style={{marginRight: '1rem'}}>Bio</h3>
-              <input type="text" className="profile-bio"
-                value={userDetail.bio}
-                onChange={(e) => (dispatch(updateFields({ field: 'bio', value: e.target.value })))} />
-              </div>
-            </div>
-          ) :
-            <div>
-              <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
-              <h2>{userDetail.Role}</h2>
-              {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
-            </div>
-          }
+        <ProfileInfo>
+          {editMode ? (
+            <EditComp editfields={[{ label: "Name", key: "FullName" }, { label: "Role", key: "Role" }, { label: "Bio", key: "bio" }, { label: "Email", key: "email" }, { label: "Phone", key: "PhoneNumber" }, { label: "Location", key: "location" }]}
+              usereditDetail={{ FullName: userDetail.FullName, bio: userDetail.bio ,Role:userDetail.Role, email: userDetail.email, PhoneNumber: userDetail.PhoneNumber, location: userDetail.location}} />)
+            :
+            (
+              <>
+                <div>
+                  <ProfileName>{userDetail.FullName || 'No Name'}</ProfileName>
+                  <h2>{userDetail.Role}</h2>
+                  {userDetail.bio && <ProfileBio>{userDetail.bio}</ProfileBio>}
+                </div>
 
-          <ProfileDetails>
-            {userDetail.email && (
-              <ProfileDetail>
-                <FontAwesomeIcon icon={faEnvelope} />
-                <span>{userDetail.email}</span>
-              </ProfileDetail>
+                <ProfileDetails>
+                  {userDetail.email && (
+                    <ProfileDetail>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                      <span>{userDetail.email}</span>
+                    </ProfileDetail>
+                  )}
+                  {userDetail.PhoneNumber && (
+                    <ProfileDetail>
+                      <FontAwesomeIcon icon={faPhone} />
+                      <span>{userDetail.PhoneNumber}</span>
+                    </ProfileDetail>
+                  )}
+                  {userDetail.location && (
+                    <ProfileDetail>
+                      <FontAwesomeIcon icon={faMapPin} />
+                      <span>{userDetail.location}</span>
+                    </ProfileDetail>
+                  )}
+                </ProfileDetails>
+              </>
             )}
-            {userDetail.phone && (
-              <ProfileDetail>
-                <FontAwesomeIcon icon={faPhone} />
-                <span>{userDetail.phone}</span>
-              </ProfileDetail>
-            )}
-            {userDetail.location && (
-              <ProfileDetail>
-                <FontAwesomeIcon icon={faMapPin} />
-                <span>{userDetail.location}</span>
-              </ProfileDetail>
-            )}
-          </ProfileDetails>
           <EditButton onClick={handleEditProfileInfo}>
             <FontAwesomeIcon icon={faPencil} />
           </EditButton>

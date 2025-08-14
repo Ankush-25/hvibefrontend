@@ -6,7 +6,7 @@ import { Api_url } from "../globalConfig";
 export const fetchProfile = createAsyncThunk("usrProfile/fetchProfile", async (_,thunkAPI) => {
     const authtoken = localStorage.getItem("token");
     try {
-        const res = await axios.get(`${Api_url}/profile`, {
+        const res = await axios.get(`${Api_url}/app/profile`, {
             headers: { Authorization: `Bearer ${authtoken}` }
         });
         return res.data.response;
