@@ -14,11 +14,39 @@
   margin-left: 10px;
 }
 
+.editButton {
+  margin-top: -25px;
+  margin-left: 676px;
+  position: absolute;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.editButton:hover {
+  background: #4f46e5;
+  transform: scale(1.1);
+}
+
 .form-label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 500;
-  color: #e0e0e0;
+  display: flex;
+  white-space: nowrap;
+  padding-bottom: 14px;
+  padding-right: 13px;
+  padding-left: 39px;
+  font-size: 19px;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-input {
@@ -144,11 +172,12 @@
   background-color: transparent;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
-  color: #ffffff; 
-  
-  &:hover{
+  color: #ffffff;
+
+  &:hover {
     border-color: 1px solid grey;
   }
+
   @media (max-width: 768px) {
     font-size: 1.8rem;
   }
@@ -162,4 +191,224 @@
   color: #d0d0d0;
   max-width: 800px;
   word-wrap: break-word;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+/* Experience Section Styling */
+.experience-card {
+  background: #2c2c2c;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #3c3c3c;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.experience-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-color: #3897f0;
+}
+
+.experience-card h3 {
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.experience-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.experience-description {
+  color: #d0d0d0;
+  line-height: 1.6;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+/* Experience Form */
+.experience-form {
+  background: #2c2c2c;
+  border-radius: 8px;
+  padding: 2rem;
+  border-left: 3px solid #3897f0;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.experience-form:hover {
+  border-color: #3897f0;
+  box-shadow: 0 4px 15px #3897f0;
+}
+
+.experience-form input,
+.experience-form textarea {
+  width: 96%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  padding-right: 21px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #3c3c3c;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.experience-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.experience-form input:focus,
+.experience-form textarea:focus {
+  outline: none;
+  border-color: #3897f0;
+  box-shadow: 0 0 0 2px rgba(56, 151, 240, 0.2);
+}
+
+.experience-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #3c3c3c;
+}
+
+.experience-form-actions .btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.experience-form-actions .cancel-btn .label {
+  background: transparent;
+  color: #b0b0b0;
+  border: 1px solid #444;
+}
+
+.experience-form-actions .cancel-btn:hover {
+  background: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.experience-form-actions .submit-btn {
+  background: #3897f0;
+  color: white;
+  border: none;
+}
+
+.experience-form-actions .submit-btn:hover {
+  background: #2680e0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.no-experience {
+  color: #999;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.add-experience-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #2c2c2c;
+  color: #5fb0ff;
+  border: 1px solid #3c3c3c;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 1rem 0 2rem;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-experience-btn:hover {
+  background: #333;
+  border-color: #3897f0;
+  color: #5fb0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.add-experience-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.add-experience-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.experience-card {
+  background: #1e1e1e;
+  /* assuming dark card background */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.experience-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.experience-meta {
+  display: flex;
+  gap: 1rem;
+  color: #b0b0b0;
+  margin-bottom: 0.5rem;
+}
+
+.experience-description {
+  margin: 0.5rem 0 0 0;
+  color: #d0d0d0;
+}
+
+.no-experience {
+  color: #999;
+  font-style: italic;
+}
+
+.experience-form-container {
+  background: #2c2c2c;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid #3897f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.duration-set {
+  display: flex;
+  gap: 40px;
 }

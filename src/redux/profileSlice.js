@@ -1,9 +1,9 @@
-import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Api_url } from "../globalConfig";
 
 
-export const fetchProfile = createAsyncThunk("usrProfile/fetchProfile", async (_,thunkAPI) => {
+export const fetchProfile = createAsyncThunk("usrProfile/fetchProfile", async (_, thunkAPI) => {
     const authtoken = localStorage.getItem("token");
     try {
         const res = await axios.get(`${Api_url}/app/profile`, {
@@ -51,9 +51,9 @@ const usrProfileSlice = createSlice({
             const { field, value } = action.payload;
             state[field] = value;
         },
-        updateNestedFields:(state, action)=>{
-            const { section, field, value } = action.payload;
-            state.profile[section][field] = value;
+        updateNestedFields: (state, action) => {
+            const { section, value } = action.payload;
+            state.profile[section] = value;
         },
         setLoading: (state, action) => {
             state.loading = action.payload;
@@ -61,27 +61,27 @@ const usrProfileSlice = createSlice({
         setError: (state, action) => {
             state.error = action.payload;
         },
-        clearProfile:()=>{
+        clearProfile: () => {
             return initialState;
         }
     },
-    extraReducers:(builder)=>{
-        builder.addCase(fetchProfile.pending,(state)=>{
+    extraReducers: (builder) => {
+        builder.addCase(fetchProfile.pending, (state) => {
             state.loading = true;
             state.error = null;
         })
-        .addCase(fetchProfile.fulfilled,(state,action)=>{
-            state.loading = false;
-            Object.assign(state,action.payload)
+            .addCase(fetchProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                Object.assign(state, action.payload)
 
-        })
-        .addCase(fetchProfile.rejected,(state,action)=>{
-            state.loading = false;
-            state.error = action.payload||"Failed to fetch profile";
-        })
+            })
+            .addCase(fetchProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch profile";
+            })
     }
 })
- 
+
 export const {
     setProfile,
     setError,
