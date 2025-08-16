@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProfile, updateFields, updateNestedFields } from "../redux/profileSlice.js";
+import { fetchProfile, updateNestedFields, addNestedFields } from "../redux/profileSlice.js";
 import './profile.css';
 import {
   faEnvelope,
@@ -48,13 +48,16 @@ const LoadingSpinner = () => (
 );
 
 export function Profile() {
+  const dispatch = useDispatch();
   const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [addData, setAddData] = useState(false);
-  const [editExpData, setEditExpData] = useState(false);
-  const [HeaderEditMode, setHeaderEditMode] = useState(false);
-  const dispatch = useDispatch();
-  const userDetail = useSelector((state) => state.usrProfile);
+  const [editExpData, setEditExpData] = useState(null);
+  const [isOpenPosition, setIsOpenPosition] = useState({
+    Header: false,
+    Skills: false,
+  });
+
   useEffect(() => {
     try {
       if (currentUser?.authtoken) {
@@ -66,8 +69,19 @@ export function Profile() {
       setLoading(false);
     }
   }, [currentUser?.authtoken, dispatch]);
+
+  const userDetail = useSelector((state) => state.usrProfile);
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
+
+  const handleOpenExp = (index) => {
+    setEditExpData(index);
+  };
+
+  const handleCloseExp = () => {
+    setEditExpData(null);
+  };
+
 
   if (loading) {
     return <LoadingSpinner />;
@@ -77,66 +91,87 @@ export function Profile() {
   }
   const handleEditProfilePhoto = (e) => {
     e.stopPropagation();
-    console.log("Edit button clicked");
   };
 
   const handleCloseEdit = () => {
-    setHeaderEditMode(false);
+    setIsOpenPosition({ Header: false });
   };
   const handleEditProfileInfo = () => {
-    console.log("Edit button clicked");
-    setHeaderEditMode(true);
+    setIsOpenPosition({ Header: true });
   }
   const handleAddExperience = async (e) => {
     e.preventDefault();
     try {
-      const { title, company, description, startDate, endDate } = e.target;
-      const formData = { title: title.value, company: company.value, description: description.value, duration: `${startDate.value} - ${endDate.value}` }; //now here to change the type of the end date and starting date 
-      const tempExperience = [...experience, formData];
-      dispatch(updateNestedFields({ section: "experience", value: tempExperience }))
-      const expdata = await axios.patch(`${Api_url}/app/updateProfile`, { profile: { experience: tempExperience } },
+      const formData = {
+        title: e.target.title.value,
+        company: e.target.company.value,
+        description: e.target.description.value,
+        duration: `${e.target.startDate.value} - ${e.target.endDate.value}`
+      };
+      dispatch(addNestedFields({ section: "experience", value: [...experience, formData] }))
+      const updatedData = await axios.patch(`${Api_url}/app/updateProfile`,
+        { profile: { experience: [...experience, formData] } },
         { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
       );
-      if (expdata.status === 200) {
+      if (updatedData.status === 200) {
         e.target.reset();
       }
     } catch (error) {
       console.error("Failed to Add Experience", error);
     }
   }
+  const handleUpdateExperienceInfo = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = {
+        title: e.target.Title.value,
+        company: e.target.Company.value,
+        description: e.target.Description.value,
+        duration: e.target.Duration.value //change in further update
+      }
+      var updatedExp=[...experience];
+      updatedExp[editExpData]=formData;
+      dispatch(updateNestedFields({ section: "experience", index:editExpData, value: formData }))
+      const UpdatedData = await axios.patch(`${Api_url}/app/updateProfile`,{profile:{experience: updatedExp}}, {headers:{Authorization: `Bearer ${currentUser?.authtoken}`}}) 
 
-  function EditComp({ editfields, usereditDetail }) {
+      if (UpdatedData.status === 200) {
+        // send notification
+        console.log("Experience Updated Successfully",UpdatedData)
+      }
+      console.log(formData)
+      
+    } catch (error) {
+      console.error("Failed to Update Experience", error);
+    } finally {
+      setEditExpData(null);
+    }
+  }
+
+
+  function EditComp({
+    title,
+    onClose,
+    onSubmit,
+    editfields,
+    usereditDetail }) {
     const [editDetail, setEditDetail] = useState(editfields);
 
 
-
-    const handleCloseEdit = () => {
-      setHeaderEditMode(false);
-    };
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      // Handle form submission here
-
-
-      // redux save option and then api call
-      console.log("Form submitted");
-      setHeaderEditMode(false);
-    };
-
     return (
-      <ModalOverlay onClick={handleCloseEdit}>
+      <ModalOverlay onClick={onClose}>
         <ModalContent onClick={e => e.stopPropagation()}>
           <ModalHeader>
-            <h2>Edit Profile</h2>
-            <CloseButton onClick={handleCloseEdit}>&times;</CloseButton>
+            <h2>{title}</h2>
+            <CloseButton onClick={onClose}>&times;</CloseButton>
           </ModalHeader>
-          <form onSubmit={handleSubmit} className="form-container">
+          <form onSubmit={onSubmit} className="form-container">
             {editDetail.map((field, index) => (
               <div className="form-group" key={index}>
-                <label className="form-label">{field.label}</label>
+                <label className="form-editlabel">{field.label}</label>
                 <input
                   type="text"
-                  defaultValue={usereditDetail[field.key] || ''}
+                  name={field.label}
+                  defaultValue={usereditDetail[field.key]}
                   className="form-input"
                 />
               </div>
@@ -144,7 +179,7 @@ export function Profile() {
             <div className="form-actions">
               <button
                 type="button"
-                onClick={handleCloseEdit}
+                onClick={onClose}
                 className="btn cancel-btn"
               >
                 Cancel
@@ -176,9 +211,27 @@ export function Profile() {
         </ProfileImageContainer>
         {/* done to add edit comp */}
         <ProfileInfo>
-          {HeaderEditMode ? (
-            <EditComp editfields={[{ label: "Name", key: "FullName" }, { label: "Role", key: "Role" }, { label: "Bio", key: "bio" }, { label: "Email", key: "email" }, { label: "Phone", key: "PhoneNumber" }, { label: "Location", key: "location" }]}
-              usereditDetail={{ FullName: userDetail.FullName, bio: userDetail.bio, Role: userDetail.Role, email: userDetail.email, PhoneNumber: userDetail.PhoneNumber, location: userDetail.location }} />)
+          {isOpenPosition.Header ? (
+            <EditComp
+              editfields={[
+                { label: "Name", key: "FullName" },
+                { label: "Role", key: "Role" },
+                { label: "Bio", key: "bio" },
+                { label: "Email", key: "email" },
+                { label: "Phone", key: "PhoneNumber" },
+                { label: "Location", key: "location" },
+              ]}
+              usereditDetail={{
+                FullName: userDetail.FullName,
+                bio: userDetail.bio,
+                Role: userDetail.Role,
+                email: userDetail.email,
+                PhoneNumber: userDetail.PhoneNumber,
+                location: userDetail.location,
+              }}
+              onClose={handleCloseEdit}
+              title={"Edit Profile Info"}
+            />)
             :
             (
               <>
@@ -219,24 +272,48 @@ export function Profile() {
       {/* done to add edit comp */}
       <Section>
         <div className="section-header">
-          <FontAwesomeIcon icon={faBriefcase} style={{ color: '#3897f0' ,paddingBottom: "20px",fontSize: "30px"}} />
+          <FontAwesomeIcon icon={faBriefcase} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
           <h2>Experience</h2>
         </div>
         {experience?.length > 0 ? (
           <>
-            {experience.map((exp, index) => (
-              <Card key={index} className="experience-card">
-                <h3>{exp.title}</h3>
-                <div className="experience-meta">
-                  <span>{exp.company}</span>
-                  <span>•</span>
-                  <span>{exp.duration}</span>
-                </div>
-                {exp.description && (
-                  <p className="experience-description">{exp.description}</p>
-                )}
-              </Card>
-            ))}
+            {editExpData!==null  && (
+              <EditComp
+                editfields={[
+                  { label: "Title", key: "title" },
+                  { label: "Company", key: "company" },
+                  { label: "Description", key: "description" },
+                  { label: "Duration", key: "duration" }
+                ]}
+                usereditDetail={{
+                  title: experience[editExpData].title,
+                  company: experience[editExpData].company,
+                  description: experience[editExpData].description,
+                  duration: experience[editExpData].duration
+                }}
+                onClose={handleCloseExp}
+                title={"Edit Experience"}
+                onSubmit={handleUpdateExperienceInfo}
+              />
+            )}
+            <>
+              {experience.map((exp, index) => (
+                <Card key={index} className="experience-card">
+                  <div onClick={() => (handleOpenExp(index))}>
+                    <FontAwesomeIcon icon={faPencil} />
+                  </div>
+                  <h3>{exp.title}</h3>
+                  <div className="experience-meta">
+                    <span>{exp.company}</span>
+                    <span>•</span>
+                    <span>{exp.duration}</span>
+                  </div>
+                  {exp.description && (
+                    <p className="experience-description">{exp.description}</p>
+                  )}
+                </Card>
+              ))}
+            </>
             {addData && (
               <form className="experience-form" onSubmit={handleAddExperience}>
                 <h2>Add Experience</h2>
@@ -373,7 +450,7 @@ export function Profile() {
       </Section>
       <Section>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#3897f0',paddingBottom: "20px",fontSize: "30px" }} />
+          <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
           <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Education</h2>
         </div>
         {education?.length > 0 ? (
@@ -397,7 +474,7 @@ export function Profile() {
       </Section>
       <Section>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <FontAwesomeIcon icon={faCode} style={{ color: '#3897f0',paddingBottom: "20px",fontSize: "30px" }} />
+          <FontAwesomeIcon icon={faCode} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
           <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Skills</h2>
         </div>
         {skills?.length > 0 ? (
@@ -423,11 +500,10 @@ export function Profile() {
           <p style={{ color: '#999', fontStyle: 'italic' }}>No skills added yet</p>
         )}
       </Section>
-
       {userDetail.resume && (
         <Section>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <FontAwesomeIcon icon={faFilePdf} style={{ color: '#3897f0',paddingBottom: "20px",fontSize: "30px" }} />
+            <FontAwesomeIcon icon={faFilePdf} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
             <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Resume</h2>
           </div>
           <a

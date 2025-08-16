@@ -38,6 +38,12 @@
   transform: scale(1.1);
 }
 
+.form-editlabel {
+  color: white;
+  display: flex;
+
+}
+
 .form-label {
   display: flex;
   white-space: nowrap;

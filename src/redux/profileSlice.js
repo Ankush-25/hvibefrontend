@@ -51,9 +51,13 @@ const usrProfileSlice = createSlice({
             const { field, value } = action.payload;
             state[field] = value;
         },
-        updateNestedFields: (state, action) => {
+        addNestedFields: (state, action) => {
             const { section, value } = action.payload;
             state.profile[section] = value;
+        },
+        updateNestedFields: (state, action) => {
+            const { section,index, value } = action.payload;
+            state.profile[section][index] = value;
         },
         setLoading: (state, action) => {
             state.loading = action.payload;
@@ -89,6 +93,7 @@ export const {
     clearProfile,
     updateFields,
     updateNestedFields,
+    addNestedFields,
 } = usrProfileSlice.actions;
 
 export default usrProfileSlice.reducer;
