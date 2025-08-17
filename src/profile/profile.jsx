@@ -54,6 +54,7 @@ export function Profile() {
   const [loading, setLoading] = useState(true);
   const [addData, setAddData] = useState(false);
   const [editExpData, setEditExpData] = useState(null);
+  const [editEduData, setEditEduData] = useState(null);
   const [isOpenPosition, setIsOpenPosition] = useState({
     Header: false,
     Skills: false,
@@ -82,12 +83,16 @@ export function Profile() {
     setEditExpData(null);
   };
 
+  const handleCloseEdu = () => {
+    setEditEduData(null);
+  };
+
 
   if (loading) {
     return <LoadingSpinner />;
   }
-  const handleAddData = () => {
-    setAddData(true);
+  const handleAddData = (type) => {
+    setAddData(type); // 'experience' or 'education'
   }
   const handleEditProfilePhoto = (e) => {
     e.stopPropagation();
@@ -98,7 +103,81 @@ export function Profile() {
   };
   const handleEditProfileInfo = () => {
     setIsOpenPosition({ Header: true });
-  }
+  };
+
+  const handleAddEducation = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = {
+        degree: e.target.degree.value,
+        institution: e.target.institution.value,
+        fieldOfStudy: e.target.fieldOfStudy.value,
+        description: e.target.description?.value || '',
+        duration: `${e.target.startDate.value} - ${e.target.endDate?.value || 'Present'}`
+      };
+
+      // Update Redux state
+      dispatch(addNestedFields({ 
+        section: "education", 
+        value: [...education, formData] 
+      }));
+
+      // Update backend
+      const response = await axios.patch(
+        `${Api_url}/app/updateProfile`,
+        { profile: { education: [...education, formData] } },
+        { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
+      );
+
+      if (response.status === 200) {
+        e.target.reset();
+        setAddData(false);
+        // Add success notification
+      }
+    } catch (error) {
+      console.error("Failed to Add Education", error);
+      // Add error notification
+    }
+  };
+
+  const handleUpdateEducationInfo = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = {
+        ...education[editEduData],
+        degree: e.target.degree.value,
+        institution: e.target.institution.value,
+        fieldOfStudy: e.target.fieldOfStudy.value,
+        description: e.target.description?.value || '',
+        duration: `${e.target.startDate.value} - ${e.target.endDate?.value || 'Present'}`
+      };
+
+      // Update Redux state
+      const updatedEducation = [...education];
+      updatedEducation[editEduData] = formData;
+      
+      dispatch(updateNestedFields({ 
+        section: "education", 
+        index: editEduData, 
+        value: formData 
+      }));
+
+      // Update backend
+      const response = await axios.patch(
+        `${Api_url}/app/updateProfile`,
+        { profile: { education: updatedEducation } },
+        { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
+      );
+
+      if (response.status === 200) {
+        setEditEduData(null);
+        // Add success notification
+      }
+    } catch (error) {
+      console.error("Failed to Update Education", error);
+      // Add error notification
+    }
+  };
   const handleAddExperience = async (e) => {
     e.preventDefault();
     try {
@@ -158,75 +237,119 @@ export function Profile() {
 
 
 
-  const handleOnDelete = async (index) => {
+  const handleOnDelete = async (section, index, id) => {
     try {
-
-      //Send toaster confirm notification
-      const RemovedExp = experience[index]
-      const ExpId = RemovedExp._id
-      const deleteExpData = await axios.delete(`${Api_url}/app/profile`, {
-        data: { userId: currentUser.userId, expId: ExpId },
+      const response = await axios.delete(`${Api_url}/app/profile`, {
+        data: { 
+          userId: currentUser.userId, 
+          [section === 'experience' ? 'expId' : 'eduId']: id 
+        },
         headers: { Authorization: `Bearer ${currentUser?.authtoken}` }
       });
-      if (deleteExpData.status === 200) {
-        // Send a toster notification
-
-        dispatch(deleteNestedFields({ section: "experience", index: index }));
-        console.log(experience);
+      
+      if (response.status === 200) {
+        dispatch(deleteNestedFields({ section, index }));
+        // Add success notification
       }
     } catch (error) {
-      console.error("Failed to Delete Experience", error)
+      console.error(`Failed to Delete ${section.charAt(0).toUpperCase() + section.slice(1)}`, error);
+      // Add error notification
     }
   }
 
   function EditComp({
     title,
+    editfields,
+    usereditDetail,
     onClose,
     onSubmit,
-    editfields,
-    usereditDetail }) {
-    const [editDetail, setEditDetail] = useState(editfields);
-
-
+    isEducation = false
+  }) {
     return (
-      <ModalOverlay onClick={onClose}>
-        <ModalContent onClick={e => e.stopPropagation()}>
-          <ModalHeader>
-            <h2>{title}</h2>
-            <CloseButton onClick={onClose}>&times;</CloseButton>
-          </ModalHeader>
-          <form onSubmit={onSubmit} className="form-container">
-            {editDetail.map((field, index) => (
-              <div className="form-group" key={index}>
-                <label className="form-editlabel">{field.label}</label>
-                <input
-                  type="text"
-                  name={field.label}
-                  defaultValue={usereditDetail[field.key]}
-                  className="form-input"
-                />
-              </div>
-            ))}
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2 className="modal-title">{title}</h2>
+            <button className="close-button" onClick={onClose} aria-label="Close">
+              &times;
+            </button>
+          </div>
+          <form onSubmit={onSubmit} className="edit-form">
+            <div className="form-grid">
+              {editfields.map((field) => (
+                <div key={field.key} className={`form-group ${field.key === 'description' ? 'full-width' : ''}`}>
+                  <label htmlFor={field.key} className="form-label">
+                    {field.label}
+                    {field.required && <span className="required">*</span>}
+                  </label>
+                  {field.key === 'description' ? (
+                    <div className="input-wrapper">
+                      <textarea
+                        id={field.key}
+                        name={field.key}
+                        className="form-textarea"
+                        defaultValue={usereditDetail?.[field.key] || ""}
+                        rows="4"
+                        placeholder={`Enter ${field.label.toLowerCase()}`}
+                      />
+                    </div>
+                  ) : field.key.includes('Date') ? (
+                    <div className="input-wrapper">
+                      <input
+                        type="date"
+                        id={field.key}
+                        name={field.key}
+                        className="form-input"
+                        defaultValue={
+                          field.key === 'startDate' || field.key === 'endDate'
+                            ? usereditDetail?.duration?.split(' - ')[field.key === 'startDate' ? 0 : 1] || ""
+                            : ""
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <div className="input-wrapper">
+                      <input
+                        type="text"
+                        id={field.key}
+                        name={field.key}
+                        className="form-input"
+                        defaultValue={
+                          field.key === 'title' || field.key === 'company' || 
+                          field.key === 'degree' || field.key === 'institution' || 
+                          field.key === 'fieldOfStudy'
+                            ? usereditDetail?.[field.key] || ""
+                            : ""
+                        }
+                        placeholder={`Enter ${field.label.toLowerCase()}`}
+                        required={field.required !== false}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
             <div className="form-actions">
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn cancel-btn"
+              <button 
+                type="button" 
+                onClick={onClose} 
+                className="btn btn-secondary"
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="btn submit-btn"
+              <button 
+                type="submit" 
+                className="btn btn-primary"
               >
                 Save Changes
               </button>
             </div>
           </form>
-        </ModalContent>
-      </ModalOverlay>
-    )
+        </div>
+      </div>
+    );
   }
+
   return (
     <ProfileContainer>
       <ProfileHeader>
@@ -334,7 +457,7 @@ export function Profile() {
                     <div onClick={() => (handleOpenExp(index))}>
                       <FontAwesomeIcon icon={faPencil} />
                     </div>
-                    <div onClick={() => handleOnDelete(index)}>
+                    <div onClick={() => handleOnDelete('experience', index, exp._id)}>
                       <FontAwesomeIcon icon={faTrash} />
                     </div>
                   </div>
@@ -350,7 +473,7 @@ export function Profile() {
                 </Card>
               ))}
             </>
-            {addData && (
+            {addData === 'experience' && (
               <form className="experience-form" onSubmit={handleAddExperience}>
                 <h2>Add Experience</h2>
                 <input
@@ -407,8 +530,8 @@ export function Profile() {
             )}
             <button
               className="add-experience-btn"
-              onClick={handleAddData}
-              style={{ display: addData ? 'none' : 'inline-flex' }}
+              onClick={() => handleAddData('experience')}
+              style={{ display: addData === 'experience' ? 'none' : 'inline-flex' }}
             >
               <FontAwesomeIcon icon={faPlus} />
               Add Experience
@@ -417,7 +540,7 @@ export function Profile() {
         ) : (
           <div style={{ textAlign: 'center', padding: '2rem 0' }}>
             <p className="no-experience" style={{ marginBottom: '1rem' }}>No experience added yet</p>
-            {addData && (
+            {addData === 'experience' && (
               <form className="experience-form" onSubmit={handleAddExperience}>
                 <h2>Add Experience</h2>
                 <input
@@ -454,8 +577,8 @@ export function Profile() {
                 />
                 <textarea
                   placeholder="Job Description (Optional)"
-                  rows="4"
                   name="description"
+                  rows="4"
                 ></textarea>
                 <div className="experience-form-actions">
                   <button
@@ -474,38 +597,197 @@ export function Profile() {
                 </div>
               </form>
             )}
-            {!addData && <button
-              className="add-experience-btn"
-              onClick={handleAddData}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              Add Your First Experience
-            </button>}
+            {addData !== 'experience' && (
+              <button
+                className="add-experience-btn"
+                onClick={() => handleAddData('experience')}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+                Add Your First Experience
+              </button>
+            )}
           </div>
         )}
       </Section>
+      {/* Education Section */}
       <Section>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="section-header">
           <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
-          <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Education</h2>
+          <h2>Education</h2>
         </div>
         {education?.length > 0 ? (
-          education.map((edu, index) => (
-            <Card key={index}>
-              <h3 style={{ margin: '0 0 0.5rem 0', color: '#ffffff' }}>{edu.degree}</h3>
-              <div style={{ display: 'flex', gap: '1rem', color: '#b0b0b0', marginBottom: '0.5rem' }}>
-                <span>{edu.institution}</span>
-                {edu.year && (
-                  <>
+          <>
+            {editEduData !== null && (
+              <EditComp
+                editfields={[
+                  { label: "Degree", key: "degree" },
+                  { label: "Institution", key: "institution" },
+                  { label: "Field of Study", key: "fieldOfStudy" },
+                  { label: "Start Date", key: "startDate" },
+                  { label: "End Date", key: "endDate" },
+                  { label: "Description", key: "description" }
+                ]}
+                usereditDetail={{
+                  ...education[editEduData],
+                  ...(education[editEduData].duration && {
+                    startDate: education[editEduData].duration.split(' - ')[0],
+                    endDate: education[editEduData].duration.split(' - ')[1] || 'Present'
+                  })
+                }}
+                onClose={handleCloseEdu}
+                title={"Edit Education"}
+                onSubmit={handleUpdateEducationInfo}
+                isEducation={true}
+              />
+            )}
+            <>
+              {education.map((edu, index) => (
+                <Card key={index} className="education-card">
+                  <div className="ButtonsCon">
+                    <div onClick={() => setEditEduData(index)}>
+                      <FontAwesomeIcon icon={faPencil} />
+                    </div>
+                    <div onClick={() => handleOnDelete('education', index, edu._id)}>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </div>
+                  </div>
+                  <h3>{edu.degree}</h3>
+                  <div className="education-meta">
+                    <span>{edu.institution}</span>
                     <span>•</span>
-                    <span>{edu.year}</span>
-                  </>
-                )}
-              </div>
-            </Card>
-          ))
+                    <span>{edu.fieldOfStudy}</span>
+                  </div>
+                  <div className="education-duration">
+                    <span>{edu.duration}</span>
+                  </div>
+                  {edu.description && (
+                    <p className="education-description">{edu.description}</p>
+                  )}
+                </Card>
+              ))}
+            </>
+            {addData === 'education' && (
+              <form className="education-form" onSubmit={handleAddEducation}>
+                <h2>Add Education</h2>
+                <input
+                  type="text"
+                  placeholder="Degree"
+                  name="degree"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Institution"
+                  name="institution"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Field of Study"
+                  name="fieldOfStudy"
+                  required
+                />
+                <div className="date-inputs">
+                  <div>
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required />
+                  </div>
+                  <div>
+                    <label>End Date (or expected)</label>
+                    <input type="date" name="endDate" />
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Description (Optional)"
+                  name="description"
+                  rows="4"
+                ></textarea>
+                <div className="education-form-actions">
+                  <button
+                    type="button"
+                    className="btn cancel-btn"
+                    onClick={() => setAddData(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn submit-btn">
+                    Save Education
+                  </button>
+                </div>
+              </form>
+            )}
+            <button
+              className="add-education-btn"
+              onClick={() => handleAddData('education')}
+              style={{ display: addData === 'education' ? 'none' : 'inline-flex' }}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              Add Education
+            </button>
+          </>
         ) : (
-          <p style={{ color: '#999', fontStyle: 'italic' }}>No education information added yet</p>
+          <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+            <p className="no-education" style={{ marginBottom: '1rem' }}>No education added yet</p>
+            {addData === 'education' && (
+              <form className="education-form" onSubmit={handleAddEducation}>
+                <h2>Add Education</h2>
+                <input
+                  type="text"
+                  placeholder="Degree"
+                  name="degree"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Institution"
+                  name="institution"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Field of Study"
+                  name="fieldOfStudy"
+                  required
+                />
+                <div className="date-inputs">
+                  <div>
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required />
+                  </div>
+                  <div>
+                    <label>End Date (or expected)</label>
+                    <input type="date" name="endDate" />
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Description (Optional)"
+                  name="description"
+                  rows="4"
+                ></textarea>
+                <div className="education-form-actions">
+                  <button
+                    type="button"
+                    className="btn cancel-btn"
+                    onClick={() => setAddData(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn submit-btn">
+                    Save Education
+                  </button>
+                </div>
+              </form>
+            )}
+            {addData !== 'education' && (
+              <button
+                className="add-education-btn"
+                onClick={() => handleAddData('education')}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+                Add Your First Education
+              </button>
+            )}
+          </div>
         )}
       </Section>
       <Section>
