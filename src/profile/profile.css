@@ -418,3 +418,8 @@
   display: flex;
   gap: 40px;
 }
+.ButtonsCon{
+  display: flex;
+  gap: 20px;
+  float: right;
+}

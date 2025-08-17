@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProfile, updateNestedFields, addNestedFields } from "../redux/profileSlice.js";
+import { fetchProfile, updateNestedFields, addNestedFields, deleteNestedFields } from "../redux/profileSlice.js";
 import './profile.css';
 import {
   faEnvelope,
@@ -14,7 +14,8 @@ import {
   faCode,
   faPencil,
   faFilePdf,
-  faPlus
+  faPlus,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Api_url } from "../globalConfig.js";
@@ -73,7 +74,6 @@ export function Profile() {
   const userDetail = useSelector((state) => state.usrProfile);
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
-
   const handleOpenExp = (index) => {
     setEditExpData(index);
   };
@@ -129,17 +129,26 @@ export function Profile() {
         description: e.target.Description.value,
         duration: e.target.Duration.value //change in further update
       }
-      var updatedExp=[...experience];
-      updatedExp[editExpData]=formData;
-      dispatch(updateNestedFields({ section: "experience", index:editExpData, value: formData }))
-      const UpdatedData = await axios.patch(`${Api_url}/app/updateProfile`,{profile:{experience: updatedExp}}, {headers:{Authorization: `Bearer ${currentUser?.authtoken}`}}) 
+      var updatedExp = [...experience];
+      updatedExp[editExpData] = formData;
+      dispatch(updateNestedFields({ section: "experience", index: editExpData, value: formData }))
+      const updatedProfile = { profile: { experience: updatedExp } };
+      const updatedResponse = await axios.patch(
+        `${Api_url}/app/updateProfile`,
+        updatedProfile,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.authtoken}`,
+          },
+        }
+      );
 
-      if (UpdatedData.status === 200) {
+      if (updatedResponse.status === 200) {
         // send notification
-        console.log("Experience Updated Successfully",UpdatedData)
+        console.log("Experience Updated Successfully", updatedResponse)
       }
       console.log(formData)
-      
+
     } catch (error) {
       console.error("Failed to Update Experience", error);
     } finally {
@@ -147,6 +156,28 @@ export function Profile() {
     }
   }
 
+
+
+  const handleOnDelete = async (index) => {
+    try {
+
+      //Send toaster confirm notification
+      const RemovedExp = experience[index]
+      const ExpId = RemovedExp._id
+      const deleteExpData = await axios.delete(`${Api_url}/app/profile`, {
+        data: { userId: currentUser.userId, expId: ExpId },
+        headers: { Authorization: `Bearer ${currentUser?.authtoken}` }
+      });
+      if (deleteExpData.status === 200) {
+        // Send a toster notification
+
+        dispatch(deleteNestedFields({ section: "experience", index: index }));
+        console.log(experience);
+      }
+    } catch (error) {
+      console.error("Failed to Delete Experience", error)
+    }
+  }
 
   function EditComp({
     title,
@@ -277,7 +308,7 @@ export function Profile() {
         </div>
         {experience?.length > 0 ? (
           <>
-            {editExpData!==null  && (
+            {editExpData !== null && (
               <EditComp
                 editfields={[
                   { label: "Title", key: "title" },
@@ -299,8 +330,13 @@ export function Profile() {
             <>
               {experience.map((exp, index) => (
                 <Card key={index} className="experience-card">
-                  <div onClick={() => (handleOpenExp(index))}>
-                    <FontAwesomeIcon icon={faPencil} />
+                  <div className="ButtonsCon">
+                    <div onClick={() => (handleOpenExp(index))}>
+                      <FontAwesomeIcon icon={faPencil} />
+                    </div>
+                    <div onClick={() => handleOnDelete(index)}>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </div>
                   </div>
                   <h3>{exp.title}</h3>
                   <div className="experience-meta">
