@@ -5,7 +5,7 @@ import { faUpRightFromSquare, faBuilding, faMapMarkerAlt, faFilter, faSearch, fa
 import './SearchResults.css';
 
 const SearchResults = () => {
-  const [searchResults, setSearchResults] = useState({ jobs: [], count: 0 });
+  const [searchResults, setSearchResults] = useState({});
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     jobType: '',
@@ -22,6 +22,7 @@ const SearchResults = () => {
     if (results) {
       try {
         const parsedResults = JSON.parse(results);
+        console.log(parsedResults)
         setSearchResults(parsedResults);
       } catch (error) {
         console.error('Error parsing search results:', error);
@@ -48,8 +49,8 @@ const SearchResults = () => {
   const handleBackToSearch = () => {
     navigate('/');
   };
-
-  const filteredJobs = searchResults.jobs.filter((job) => {
+  
+  const filteredJobs = searchResults?.jobsSearched?.filter((job) => {
     if (filters.jobType && job.jobType !== filters.jobType) return false;
     if (filters.category && job.category !== filters.category) return false;
     if (filters.experienceLevel && job.experienceLevel !== filters.experienceLevel) return false;

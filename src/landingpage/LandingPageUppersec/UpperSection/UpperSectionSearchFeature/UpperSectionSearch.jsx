@@ -45,7 +45,7 @@ export function UpperSectionSearch() {
       
     } catch (error) {
       console.error('Error searching jobs:', error);
-      setError('Failed to search jobs. Please try again.');
+      setError("No Job Found");
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +89,8 @@ export function UpperSectionSearch() {
           {isLoading ? 'Searching...' : 'Search'}
         </SearchButton>
       </SearchBar>
-      {error && <div className="search-error">{error}</div>}
+      {error && <div className="search-error">
+        {error}</div>}
     </UpperSearchAndTextWrapper>
   );
 }
