@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Imagepaths } from "../assets/Global_Need_files/ImagesPaths";
 import { useAuth } from "../authContext";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProfile, updateNestedFields, addNestedFields, deleteNestedFields } from "../redux/profileSlice.js";
+import { fetchProfile, updateNestedFields, addNestedFields, deleteNestedFields, updateFields } from "../redux/profileSlice.js";
 import './profile.css';
 import {
   faEnvelope,
@@ -15,7 +15,7 @@ import {
   faPencil,
   faFilePdf,
   faPlus,
-  faTrash
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Api_url } from "../globalConfig.js";
@@ -34,12 +34,8 @@ import {
   ProfileDetails,
   Section,
   Card,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   LoadingSpinnerContainer,
   LoadingDiv,
-  CloseButton
 } from "./profilestyle";
 
 const LoadingSpinner = () => (
@@ -57,9 +53,7 @@ export function Profile() {
   const [editEduData, setEditEduData] = useState(null);
   const [isOpenPosition, setIsOpenPosition] = useState({
     Header: false,
-    Skills: false,
-  });
-
+  })
   useEffect(() => {
     try {
       if (currentUser?.authtoken) {
@@ -75,10 +69,109 @@ export function Profile() {
   const userDetail = useSelector((state) => state.usrProfile);
   const { profile = {} } = userDetail;
   const { experience = [], education = [], skills = [] } = profile;
+
+  const [showAddSkill, setShowAddSkill] = useState(false);
+  const [editingSkill, setEditingSkill] = useState(null);
+  const [editSkillValue, setEditSkillValue] = useState('');
+  const [newSkill, setNewSkill] = useState('');
+  const [localSkills, setLocalSkills] = useState([]);
+  const [isEditingResume, setIsEditingResume] = useState(false);
+  const [resumeLink, setResumeLink] = useState('');
+
+  useEffect(() => {
+    if (skills?.length > 0) {
+      setLocalSkills(skills);
+    }
+  }, [skills]);
+
+
+  // Skill management functions
+  const handleAddSkill = async (e) => {
+    e?.preventDefault();
+    try {
+      if (newSkill.trim()) {
+        const updatedSkills = [...localSkills, newSkill.trim()];
+        setLocalSkills([...updatedSkills])
+        dispatch(addNestedFields({ section: "skills", value: updatedSkills }));
+        const uptprofile = { profile: { ...profile, skills: updatedSkills } }
+        const setSkill = await axios.patch(`${Api_url}/app/updateProfile`, uptprofile, { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } })
+
+        if (setSkill.status == 200) {
+          console.log(setSkill)
+        }
+        setNewSkill('');
+        setShowAddSkill(false);
+      }
+    } catch (error) {
+      console.error("Unable to update the Skill", error);
+      console.log("Internal Server error")
+
+    }
+  };
+
+  const handleEditSkill = (index) => {
+    setEditingSkill(index);
+    setEditSkillValue(localSkills[index]);
+  };
+
+  const handleUpdateSkill = async (e) => {
+    e?.preventDefault();
+    if (editSkillValue.trim()) {
+      try {
+        const updatedSkills = [...localSkills];
+        updatedSkills[editingSkill] = editSkillValue.trim();
+        setLocalSkills(updatedSkills);
+        dispatch(updateNestedFields({ section: "skills", index: editingSkill, value: editSkillValue.trim() }));
+        const uptprofile = { profile: { ...profile, skills: updatedSkills } }
+        const updateSkill = await axios.patch(`${Api_url}/app/updateProfile`, uptprofile, { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } })
+        if (updateSkill.status == 200) {
+          console.log(updateSkill);
+        }
+      } catch (error) {
+        console.error("Unable to Modify the Skills", error);
+        console.log("Internal Server Error");
+      }
+
+      setEditingSkill(null);
+      setEditSkillValue('');
+    }
+  };
+
+  const handleDeleteSkill = (index) => {
+    const updatedSkills = localSkills.filter((_, i) => i !== index);  ///use dispach function
+    setLocalSkills(updatedSkills);
+  };
+
+  const handleUpdateResume = async () => {
+    if (!resumeLink) return;
+    
+    try {
+      const response = await axios.patch(
+        `${Api_url}/app/updateProfile`,
+        { resume: resumeLink },
+        { 
+          headers: { 
+            Authorization: `Bearer ${currentUser?.authtoken}`,
+            'Content-Type': 'application/json'
+          } 
+        }
+      );
+      
+      if (response.status === 200) {
+        dispatch(updateFields({
+          field: 'resume',
+          value: resumeLink
+        }));
+        setIsEditingResume(false);
+      }
+    } catch (error) {
+      console.error("Error updating resume:", error);
+    }
+  };
+
   const handleOpenExp = (index) => {
     setEditExpData(index);
   };
-
   const handleCloseExp = () => {
     setEditExpData(null);
   };
@@ -115,17 +208,18 @@ export function Profile() {
         description: e.target.description?.value || '',
         duration: `${e.target.startDate.value} - ${e.target.endDate?.value || 'Present'}`
       };
-
+      const uptEdu = [...education, formData];
       // Update Redux state
-      dispatch(addNestedFields({ 
-        section: "education", 
-        value: [...education, formData] 
+      dispatch(addNestedFields({
+        section: "education",
+        value: uptEdu
       }));
-
+      const updatedProfileEdu = { profile: { ...profile, education: uptEdu } }
       // Update backend
+      console.log(updatedProfileEdu)
       const response = await axios.patch(
         `${Api_url}/app/updateProfile`,
-        { profile: { education: [...education, formData] } },
+        updatedProfileEdu,
         { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
       );
 
@@ -152,20 +246,20 @@ export function Profile() {
         duration: `${e.target.startDate.value} - ${e.target.endDate?.value || 'Present'}`
       };
 
-      // Update Redux state
+      dispatch(updateNestedFields({
+        section: "education",
+        index: editEduData,
+        value: formData
+      }));
+      // Updated Redux state
+
       const updatedEducation = [...education];
       updatedEducation[editEduData] = formData;
-      
-      dispatch(updateNestedFields({ 
-        section: "education", 
-        index: editEduData, 
-        value: formData 
-      }));
-
+      const updatedProfile = { ...profile, education: updatedEducation };
       // Update backend
       const response = await axios.patch(
         `${Api_url}/app/updateProfile`,
-        { profile: { education: updatedEducation } },
+        updatedProfile,
         { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
       );
 
@@ -178,6 +272,8 @@ export function Profile() {
       // Add error notification
     }
   };
+
+  //Add Experience handling
   const handleAddExperience = async (e) => {
     e.preventDefault();
     try {
@@ -187,11 +283,14 @@ export function Profile() {
         description: e.target.description.value,
         duration: `${e.target.startDate.value} - ${e.target.endDate.value}`
       };
-      dispatch(addNestedFields({ section: "experience", value: [...experience, formData] }))
+      const updExp = [...experience, formData]
+      dispatch(addNestedFields({ section: "experience", value: updExp }))
+      const updatedProfile = { profile: { ...profile, experience: updExp } };
       const updatedData = await axios.patch(`${Api_url}/app/updateProfile`,
-        { profile: { experience: [...experience, formData] } },
+        updatedProfile,
         { headers: { Authorization: `Bearer ${currentUser?.authtoken}` } }
       );
+      console.log(updatedProfile)
       if (updatedData.status === 200) {
         e.target.reset();
       }
@@ -199,22 +298,24 @@ export function Profile() {
       console.error("Failed to Add Experience", error);
     }
   }
+
+  // Experience Edit handling
   const handleUpdateExperienceInfo = async (e) => {
     e.preventDefault();
     try {
       const formData = {
-        title: e.target.Title.value,
-        company: e.target.Company.value,
-        description: e.target.Description.value,
-        duration: e.target.Duration.value //change in further update
+        title: e.target.title.value,
+        company: e.target.company.value,
+        description: e.target.description.value,
+        duration: e.target.duration.value //change in further update
       }
+      dispatch(updateNestedFields({ section: "experience", index: editExpData, value: formData }))
       var updatedExp = [...experience];
       updatedExp[editExpData] = formData;
-      dispatch(updateNestedFields({ section: "experience", index: editExpData, value: formData }))
-      const updatedProfile = { profile: { experience: updatedExp } };
+      var updatedProfile = { ...profile, experience: updatedExp };
       const updatedResponse = await axios.patch(
         `${Api_url}/app/updateProfile`,
-        updatedProfile,
+        { profile: updatedProfile },
         {
           headers: {
             Authorization: `Bearer ${currentUser?.authtoken}`,
@@ -226,7 +327,7 @@ export function Profile() {
         // send notification
         console.log("Experience Updated Successfully", updatedResponse)
       }
-      console.log(formData)
+      console.log(updatedProfile);
 
     } catch (error) {
       console.error("Failed to Update Experience", error);
@@ -240,13 +341,13 @@ export function Profile() {
   const handleOnDelete = async (section, index, id) => {
     try {
       const response = await axios.delete(`${Api_url}/app/profile`, {
-        data: { 
-          userId: currentUser.userId, 
-          [section === 'experience' ? 'expId' : 'eduId']: id 
+        data: {
+          userId: currentUser.userId,
+          [section === 'experience' ? 'expId' : 'eduId']: id
         },
         headers: { Authorization: `Bearer ${currentUser?.authtoken}` }
       });
-      
+
       if (response.status === 200) {
         dispatch(deleteNestedFields({ section, index }));
         // Add success notification
@@ -315,9 +416,9 @@ export function Profile() {
                         name={field.key}
                         className="form-input"
                         defaultValue={
-                          field.key === 'title' || field.key === 'company' || 
-                          field.key === 'degree' || field.key === 'institution' || 
-                          field.key === 'fieldOfStudy'
+                          field.key === 'title' || field.key === 'company' ||
+                            field.key === 'degree' || field.key === 'institution' || field.key === 'FullName' || field.key === 'Role' || field.key === 'bio' || field.key === 'email' || field.key === 'PhoneNumber' || field.key === 'location' ||
+                            field.key === 'fieldOfStudy'
                             ? usereditDetail?.[field.key] || ""
                             : ""
                         }
@@ -330,15 +431,15 @@ export function Profile() {
               ))}
             </div>
             <div className="form-actions">
-              <button 
-                type="button" 
-                onClick={onClose} 
+              <button
+                type="button"
+                onClick={onClose}
                 className="btn btn-secondary"
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary"
               >
                 Save Changes
@@ -790,66 +891,170 @@ export function Profile() {
           </div>
         )}
       </Section>
+     
+
+      {/* Skills Section */}
       <Section>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <FontAwesomeIcon icon={faCode} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
-          <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Skills</h2>
+        <div className="skills-header">
+          <div className="skills-title-container">
+            <FontAwesomeIcon icon={faCode} className="skills-icon" />
+            <h2 className="skills-title">Skills</h2>
+          </div>
+          <button
+            onClick={() => setShowAddSkill(true)}
+            className="add-skill-btn"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            Add Skill
+          </button>
         </div>
-        {skills?.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-            {skills.map((skill, index) => (
-              <span
-                key={index}
-                style={{
-                  background: 'rgba(56, 151, 240, 0.1)',
-                  color: '#5fb0ff',
-                  padding: '0.4rem 0.9rem',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  transition: 'all 0.2s ease',
-                  border: '1px solid rgba(56, 151, 240, 0.2)'
-                }}
+
+        {/* Add/Edit Skill Form */}
+        {(showAddSkill || editingSkill !== null) && (
+          <div className="skill-form-container">
+            <h3 className="skill-form-title">
+              {editingSkill !== null ? 'Edit Skill' : 'Add New Skill'}
+            </h3>
+            <div className="skill-form">
+              <input
+                type="text"
+                value={editingSkill !== null ? editSkillValue : newSkill}
+                onChange={(e) =>
+                  editingSkill !== null
+                    ? setEditSkillValue(e.target.value)
+                    : setNewSkill(e.target.value)
+                }
+                placeholder="Enter a skill"
+                className="skill-input"
+              />
+              <button
+                onClick={editingSkill !== null ? handleUpdateSkill : handleAddSkill}
+                className="skill-form-btn skill-submit-btn"
               >
+                {editingSkill !== null ? 'Update' : 'Add'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddSkill(false);
+                  setEditingSkill(null);
+                  setEditSkillValue('');
+                  setNewSkill('');
+                }}
+                className="skill-form-btn skill-cancel-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+        {localSkills?.length > 0 ? (
+          <div className="skills-list">
+            {localSkills.map((skill, index) => (
+              <div key={index} className="skill-tag">
                 {skill}
-              </span>
+                <button
+                  onClick={() => handleEditSkill(index)}
+                  className="skill-btn skill-edit-btn"
+                  aria-label="Edit skill"
+                >
+                  <FontAwesomeIcon icon={faPencil} size="xs" />
+                </button>
+                <button
+                  onClick={() => handleDeleteSkill(index)}
+                  className="skill-btn skill-delete-btn"
+                  aria-label="Delete skill"
+                >
+                  <FontAwesomeIcon icon={faTrash} size="xs" />
+                </button>
+              </div>
             ))}
           </div>
         ) : (
-          <p style={{ color: '#999', fontStyle: 'italic' }}>No skills added yet</p>
+          <p className="no-skills-message">
+            No skills added yet. Click 'Add Skill' to get started.
+          </p>
         )}
       </Section>
-      {userDetail.resume && (
-        <Section>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <FontAwesomeIcon icon={faFilePdf} style={{ color: '#3897f0', paddingBottom: "20px", fontSize: "30px" }} />
-            <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Resume</h2>
+       {/* Resume Section */}
+       <Section>
+        <div className="skills-header">
+          <div className="skills-title-container">
+            <FontAwesomeIcon icon={faFilePdf} className="skills-icon" />
+            <h2 className="skills-title">Resume</h2>
           </div>
-          <a
-            href={userDetail.resume}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#3897f0',
-              textDecoration: 'none',
-              padding: '0.5rem 1rem',
-              borderRadius: '6px',
-              border: '1px solid #2d2d2d',
-              transition: 'all 0.2s ease',
-              marginTop: '1rem',
-              ':hover': {
-                backgroundColor: 'rgba(56, 151, 240, 0.1)',
-                borderColor: '#3897f0'
-              }
-            }}
-          >
-            <FontAwesomeIcon icon={faFilePdf} />
-            View Resume
-          </a>
-        </Section>
-      )}
+          {isEditingResume ? (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleUpdateResume}
+                className="add-skill-btn"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsEditingResume(false)}
+                className="add-skill-btn"
+                style={{ background: '#dc2626' }}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setResumeLink(userDetail.resume || '');
+                setIsEditingResume(true);
+              }}
+              className="add-skill-btn"
+            >
+              <FontAwesomeIcon icon={faPencil} />
+              {userDetail.resume ? 'Edit' : 'Add'} Resume
+            </button>
+          )}
+        </div>
+        {isEditingResume ? (
+          <div style={{ marginTop: '1rem' }}>
+            <input
+              type="url"
+              value={resumeLink}
+              onChange={(e) => setResumeLink(e.target.value)}
+              placeholder="Enter resume URL (e.g., Google Drive, Dropbox link)"
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                marginBottom: '0.5rem'
+              }}
+            />
+            <p style={{ fontSize: '0.875rem', color: '#666' }}>
+              Make sure the link is publicly accessible
+            </p>
+          </div>
+        ) : userDetail.resume ? (
+          <div style={{ marginTop: '1rem' }}>
+            <a
+              href={userDetail.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#3b82f6',
+                textDecoration: 'none',
+                wordBreak: 'break-all',
+                display: 'inline-block',
+                marginTop: '0.5rem',
+                ':hover': {
+                  textDecoration: 'underline'
+                }
+              }}
+            >
+              {userDetail.resume}
+            </a>
+          </div>
+        ) : (
+          <p style={{ marginTop: '1rem', color: '#666' }}>No resume uploaded yet</p>
+        )}
+      </Section>
+    
     </ProfileContainer>
   );
 }

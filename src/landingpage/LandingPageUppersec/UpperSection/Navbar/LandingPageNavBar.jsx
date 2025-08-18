@@ -80,7 +80,6 @@ export function LandingNavBar() {
     ];
 
     const shouldShowSearch = !['/', '/home'].includes(pathname);
-    console.log(userAvtar)
     return (
         <NavbarContainer>
             <LogoSection onClick={() => navigate('/')}>
