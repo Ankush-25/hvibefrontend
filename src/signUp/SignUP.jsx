@@ -8,10 +8,11 @@ function SignUp() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [typeOfUser, settypeOfUser] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -20,27 +21,27 @@ function SignUp() {
       setErrorMessage("Passwords do not match");
       return false;
     }
-    
+
     if (password.length < 6) {
       setErrorMessage("Password must be at least 6 characters long");
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
-      await register(username, email, password);
+      await register(username, email,typeOfUser, password);
       navigate('/app');
     } catch (error) {
       console.error("SignUp Failed:", error);
@@ -65,13 +66,13 @@ function SignUp() {
         <p id="txtWelcome">Create Your Account</p>
         <p className="subtitle">Join our community today</p>
       </div>
-      
+
       {errorMessage && (
         <div className="error-message">
           {errorMessage}
         </div>
       )}
-      
+
       <form className="LoginForm" onSubmit={handleSubmit}>
         <div className="FormGroup">
           <input
@@ -100,7 +101,22 @@ function SignUp() {
           <label htmlFor="email">Email Address</label>
           <div className="inputHighlight"></div>
         </div>
-        
+
+        <div className="FormGroup">
+          <select
+            onChange={(e) => settypeOfUser(e.target.value)}
+            className="FormGroup"
+            name="user-type"
+            required
+            id="user-type-select"
+            value={typeOfUser}
+          >
+            <option value="job_seeker">Job Seeker</option>
+            <option value="employer">Recruiter</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
         <div className="FormGroup">
           <input
             type="password"
@@ -114,7 +130,7 @@ function SignUp() {
           <label htmlFor="password">Password</label>
           <div className="inputHighlight"></div>
         </div>
-        
+
         <div className="FormGroup">
           <input
             type="password"
@@ -128,8 +144,8 @@ function SignUp() {
           <label htmlFor="confirmPassword">Confirm Password</label>
           <div className="inputHighlight"></div>
         </div>
-        
-        <button 
+
+        <button
           className={`LoginButton ${isLoading ? 'loading' : ''}`}
           type="submit"
           disabled={isLoading}
@@ -138,17 +154,17 @@ function SignUp() {
           <div className="buttonHighlight"></div>
         </button>
       </form>
-      
+
       <div className="signUp">
         <p className="SignupTxt">
           Already have an account?
           <a href="/login" id="signupTxturl">
             {" "}
-            Login       
+            Login
           </a>
         </p>
       </div>
-      
+
       <div className="brandMessage">
         <p>Elevate your hiring experience</p>
       </div>

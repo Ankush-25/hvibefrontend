@@ -43,7 +43,17 @@
   transition: all 0.2s ease;
   z-index: 2;
 }
-
+.FormGroup select{
+  padding: 1.1rem 1rem;
+  border: 1px solid #3a3650;
+  background: rgba(25, 23, 35, 0.8);
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #fff;
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
 .FormGroup input {
   padding: 1.1rem 1rem;
   border: 1px solid #3a3650;
