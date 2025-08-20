@@ -1,58 +1,65 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  NavbarContainer,
-  LogoSection,
-  SearchSection,
-  SearchBar,
-  MainNavigation,
-  NavItem,
-  UserSection,
-  NotificationButton,
-  NotificationBadge,
-  UserProfile,
-  ActionButtons,
-  AuthButton,
-  MobileMenuButton,
-  DropdownMenu,
-  DropdownItem
+    NavbarContainer,
+    LogoSection,
+    SearchSection,
+    SearchBar,
+    MainNavigation,
+    NavItem,
+    UserSection,
+    NotificationButton,
+    NotificationBadge,
+    UserProfile,
+    ActionButtons,
+    AuthButton,
+    MobileMenuButton,
+    DropdownMenu,
+    DropdownItem
 } from "./navbarstyes";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSearch,
-  faMapMarkerAlt,
-  faBuilding,
-  faUser,
-  faGraduationCap,
-  faBell,
-  faPlus,
-  faSignInAlt,
-  faUserPlus,
-  faBars,
-  faTimes,
-  faSignOutAlt,
-  faUserCog,
-  faBookmark,
-  faFileAlt,
-  faChartBar
+import {
+    faSearch,
+    faMapMarkerAlt,
+    faBuilding,
+    faUser,
+    faGraduationCap,
+    faBell,
+    faPlus,
+    faSignInAlt,
+    faUserPlus,
+    faBars,
+    faTimes,
+    faSignOutAlt,
+    faUserCog,
+    faBookmark,
+    faFileAlt,
+    faChartBar,
+    faHome
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../../authContext";
 import { Imagepaths } from "../../../../../src/assets/Global_Need_files/ImagesPaths";
+import { useEffect } from 'react';
 export function LandingNavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [locationInput, setLocationInput] = useState('');
     const [notifications] = useState(5);
-    const userAvtar = useSelector((state)=>(state.usrProfile?.ProfileImage))
+    const userAvtar = useSelector((state) => (state.usrProfile?.ProfileImage))
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
     const { pathname } = useLocation();
-
+    const [showLoginButton, setshowLoginButton] = useState(false)
     const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
     const toggleUserDropdown = () => setShowUserDropdown(!showUserDropdown);
 
+    useEffect(() => {
+        if (currentUser && currentUser?.authtoken) {
+            setshowLoginButton(true)
+        }
+    }, [currentUser])
     const handleSearch = (e) => {
         e?.preventDefault();
         if (searchQuery.trim()) {
@@ -68,6 +75,9 @@ export function LandingNavBar() {
 
     const menuItems = [
         { label: 'Companies', path: '/companies', icon: faBuilding },
+        { label: "Freshers", path: '/freshers', icon: faUser },
+        { label: "Internships", path: '/internships', icon: faGraduationCap },
+        { label: "Dashboard", path: '/app', icon: faHome },
         // { label: 'Career Guidance', path: '/career', icon: faGraduationCap },
     ];
 
@@ -141,11 +151,11 @@ export function LandingNavBar() {
                                 <NotificationBadge>{notifications}</NotificationBadge>
                             )}
                         </NotificationButton>
-                        
+
                         <div style={{ position: 'relative' }}>
                             <UserProfile onClick={toggleUserDropdown}>
                                 <div className="user-avatar">
-                                    <img className='user-avatar' src={userAvtar||Imagepaths.globalProfileAvatar}/>
+                                    <img className='user-avatar' src={userAvtar || Imagepaths.globalProfileAvatar} />
                                 </div>
                             </UserProfile>
 
@@ -174,8 +184,7 @@ export function LandingNavBar() {
                             <FontAwesomeIcon icon={faUserPlus} className="auth-icon" />
                             Sign Up
                         </AuthButton>
-                    </ActionButtons>
-                )}
+                    </ActionButtons>)}
             </UserSection>
         </NavbarContainer>
     );

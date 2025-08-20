@@ -3,6 +3,7 @@ import CategoryCard from './CategoryCard';
 import './CollapsibleCategoryGrid.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { createRoutesFromChildren } from 'react-router-dom';
 
 /**
  * CollapsibleCategoryGrid component for displaying job categories in a grid layout
@@ -88,8 +89,9 @@ const CollapsibleCategoryGrid = ({
       <div className={`category-grid ${isExpanded ? 'expanded' : 'collapsed'}`}>
         {displayedCategories.map((category, index) => (
           <CategoryCard
-            key={category.id || index}
+            key={ index}
             title={category.title}
+            category={category.category}
             icon={category.icon}
             count={category.count}
             theme={theme}

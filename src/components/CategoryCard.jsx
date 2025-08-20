@@ -4,7 +4,6 @@ import './CategoryCard.css';
 
 /**
  * CategoryCard component for displaying job categories
- * 
  * @param {Object} props - Component props
  * @param {string} props.title - Category title
  * @param {React.ReactNode} props.icon - Category icon
@@ -15,7 +14,8 @@ import './CategoryCard.css';
  */
 const CategoryCard = ({ 
   title, 
-  icon, 
+  icon,
+  category, 
   count = '1000+', 
   theme = 'light',
   color = '#8e44ad',
@@ -25,10 +25,10 @@ const CategoryCard = ({
   
   const handleClick = () => {
     if (onClick) {
-      onClick(title);
+      onClick(title,category);
     } else {
       // Default behavior: navigate to jobs page with category filter
-      navigate(`/jobs?category=${encodeURIComponent(title)}`);
+      navigate(`/search-results`);
     }
   };
 

@@ -36,6 +36,7 @@ export function UpperSectionSearch() {
       
       // Make API call
       const response = await axios.get(`${Api_url}/searchJobs?${params.toString()}`);
+      console.log(`${Api_url}/searchJobs?${params.toString()}`);
       
       // Store search results in localStorage for the results page
       localStorage.setItem('jobSearchResults', JSON.stringify(response.data));

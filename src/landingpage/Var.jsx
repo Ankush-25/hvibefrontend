@@ -55,174 +55,175 @@ export const popularJobDesignations = {
 // New comprehensive job categories with counts and icons
 export const jobCategories = [
   {
-    id: 1,
     title: "Software Development",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faCode} />,
     count: "5,280",
     description: "Software engineering, web development, and programming roles"
   },
   {
-    id: 2,
     title: "Data Science",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faChartPie} />,
     count: "3,450",
     description: "Data analysis, machine learning, and AI roles"
   },
   {
-    id: 3,
     title: "Marketing",
+    category: "Marketing",
     icon: <FontAwesomeIcon icon={faBullhorn} />,
     count: "2,890",
     description: "Digital marketing, content creation, and brand management"
   },
   {
-    id: 4,
     title: "Finance",
+    category: "Finance",
     icon: <FontAwesomeIcon icon={faBuildingColumns} />,
     count: "2,150",
     description: "Accounting, financial analysis, and banking roles"
   },
   {
-    id: 5,
     title: "Human Resources",
+    category: "Other",
     icon: <FontAwesomeIcon icon={faPeopleRoof} />,
     count: "1,780",
     description: "Recruitment, employee relations, and HR management"
   },
   {
-    id: 6,
     title: "Remote Work",
+    category: "Other",
     icon: <FontAwesomeIcon icon={faHouseLaptop} />,
     count: "4,620",
     description: "Work from home and remote-first positions"
   },
   {
-    id: 7,
     title: "DevOps",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faServer} />,
     count: "1,950",
     description: "Infrastructure, CI/CD, and system administration"
   },
   {
-    id: 8,
     title: "Database",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faDatabase} />,
     count: "1,340",
     description: "Database administration, architecture, and development"
   },
   {
-    id: 9,
     title: "Frontend",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faLaptopCode} />,
     count: "2,760",
     description: "UI/UX development, JavaScript frameworks, and web design"
   },
   {
-    id: 10,
     title: "Mobile",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faMobileScreen} />,
     count: "1,890",
     description: "iOS, Android, and cross-platform mobile development"
   },
   {
-    id: 11,
     title: "Security",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faShieldHalved} />,
     count: "1,230",
     description: "Cybersecurity, penetration testing, and security analysis"
   },
   {
-    id: 12,
     title: "Cloud",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faCloud} />,
     count: "2,540",
     description: "Cloud architecture, AWS, Azure, and GCP specialists"
   },
   {
-    id: 13,
     title: "UI/UX Design",
+    category: "Design",
     icon: <FontAwesomeIcon icon={faPalette} />,
     count: "1,850",
     description: "User interface and experience design, prototyping"
   },
   {
-    id: 14,
     title: "Product Management",
+    category: "Other",
     icon: <FontAwesomeIcon icon={faClipboardList} />,
     count: "1,420",
     description: "Product strategy, roadmap planning, and execution"
   },
   {
-    id: 15,
     title: "Customer Support",
+    category: "Other",
     icon: <FontAwesomeIcon icon={faHeadset} />,
     count: "3,210",
     description: "Technical support and customer service positions"
   },
   {
-    id: 16,
     title: "Quality Assurance",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faCheckDouble} />,
     count: "1,680",
     description: "Software testing and quality assurance engineering"
   },
   {
-    id: 17,
     title: "Blockchain",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faLink} />,
     count: "980",
     description: "Blockchain development and smart contracts"
   },
   {
-    id: 18,
     title: "Game Development",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faGamepad} />,
     count: "1,120",
     description: "Game design and development roles"
   },
   {
-    id: 19,
     title: "E-commerce",
+    category: "Marketing",
     icon: <FontAwesomeIcon icon={faCartShopping} />,
     count: "2,350",
     description: "Online retail and marketplace positions"
   },
   {
-    id: 20,
     title: "DevOps",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faNetworkWired} />,
     count: "2,110",
     description: "CI/CD, infrastructure as code, and automation"
   },
   {
-    id: 21,
     title: "Technical Writing",
+    category: "Education",
     icon: <FontAwesomeIcon icon={faFileLines} />,
     count: "890",
     description: "Documentation and technical content creation"
   },
   {
-    id: 22,
     title: "AI/ML Research",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faRobot} />,
     count: "1,450",
     description: "Artificial Intelligence and Machine Learning research"
   },
   {
-    id: 23,
     title: "Sales Engineering",
+    category: "Other",
     icon: <FontAwesomeIcon icon={faHandshake} />,
     count: "1,760",
     description: "Technical sales and solutions architecture"
   },
   {
-    id: 24,
     title: "Data Engineering",
+    category: "IT",
     icon: <FontAwesomeIcon icon={faDatabase} />,
     count: "2,030",
     description: "Data pipeline and ETL development"
   }
 ];
+
 
 //    "Customer Support ",
 //       "UI/UX ",
