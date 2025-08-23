@@ -23,7 +23,8 @@ function App() {
           <Route index element={<LandingPageParent />} />
           <Route path="/Blogs" element={<Blogs />} />
           <Route path="/aboutUs" element={<AboutUs />} />
-          <Route path="/search-results" element={<SearchResults />} />
+          <Route path="/search-results" element={<SearchResults />} /> 
+          {/* QueryUrl based search */}
           <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
           <Route path="/Career" element={<LandingPageParent />} />
           <Route path="/privacy-policy" element={<LandingPageParent />} />

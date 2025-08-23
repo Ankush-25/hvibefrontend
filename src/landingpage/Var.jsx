@@ -529,3 +529,61 @@ export const freshersJobs = {
     }
   ]
 };
+
+export const mockRemoteJobs = [
+  {
+    id: 1,
+    title: "Senior Frontend Developer",
+    company: "RemoteTech Inc.",
+    location: "Remote",
+    type: "Full-time",
+    experience: "5+ years",
+    salary: "$90,000 - $120,000/year",
+    skills: ["React", "TypeScript", "Node.js", "AWS"],
+    posted: "2 days ago"
+  },
+  {
+    id: 2,
+    title: "UX/UI Designer",
+    company: "DesignHub",
+    location: "Remote (Global)",
+    type: "Contract",
+    experience: "3+ years",
+    salary: "$70 - $100/hour",
+    skills: ["Figma", "Sketch", "UI/UX", "Prototyping"],
+    posted: "1 week ago"
+  },
+  {
+    id: 3,
+    title: "DevOps Engineer",
+    company: "CloudScale",
+    location: "Remote (US)",
+    type: "Full-time",
+    experience: "4+ years",
+    salary: "$110,000 - $150,000/year",
+    skills: ["Docker", "Kubernetes", "AWS", "CI/CD"],
+    posted: "3 days ago"
+  },
+  {
+    id: 4,
+    title: "Content Writer",
+    company: "ContentMint",
+    location: "Remote (Worldwide)",
+    type: "Part-time",
+    experience: "2+ years",
+    salary: "$30 - $50/hour",
+    skills: ["Content Writing", "SEO", "Blogging"],
+    posted: "5 days ago"
+  },
+  {
+    id: 5,
+    title: "Product Manager",
+    company: "ProductLabs",
+    location: "Remote (EU/NA)",
+    type: "Full-time",
+    experience: "5+ years",
+    salary: "$100,000 - $140,000/year",
+    skills: ["Product Strategy", "Agile", "JIRA", "Roadmapping"],
+    posted: "1 day ago"
+  }
+];

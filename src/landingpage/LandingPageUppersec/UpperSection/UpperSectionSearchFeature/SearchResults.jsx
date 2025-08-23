@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpRightFromSquare, faBuilding, faMapMarkerAlt, faFilter, faSearch, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './SearchResults.css';
-
+import { useSelector } from 'react-redux';
 const SearchResults = () => {
   const [searchResults, setSearchResults] = useState({});
   const [loading, setLoading] = useState(true);
+  const SearchedData = useSelector((state) => state.search.data);
   const [filters, setFilters] = useState({
     jobType: '',
     category: '',
@@ -14,23 +15,34 @@ const SearchResults = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     // Retrieve search results from localStorage
-    const results = localStorage.getItem('jobSearchResults');
-    
-    if (results) {
-      try {
-        const parsedResults = JSON.parse(results);
-        console.log(parsedResults)
-        setSearchResults(parsedResults);
-      } catch (error) {
-        console.error('Error parsing search results:', error);
+    (() => {
+      if (SearchedData) {
+        try {
+          setSearchResults(SearchedData);
+        } catch (error) {
+          console.error('Error parsing search results:', error);
+        }
       }
-    }
-    
-    setLoading(false);
-  }, []);
+      if (!SearchedData) {
+          const results = localStorage.getItem('jobSearchResults');
+          if (results) {
+              try {
+                  const parsedResults = JSON.parse(results);
+                  setSearchResults(parsedResults);
+                } catch (error) {
+                    console.error('Error parsing search results:', error);
+                  }
+                }
+              }
+            })();
+            console.log(SearchedData)
+            console.log(searchResults)
+            setLoading(false);
+  }, [SearchedData]);
+  
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +61,7 @@ const SearchResults = () => {
   const handleBackToSearch = () => {
     navigate('/');
   };
-  
+
   const filteredJobs = searchResults?.jobsSearched?.filter((job) => {
     if (filters.jobType && job.jobType !== filters.jobType) return false;
     if (filters.category && job.category !== filters.category) return false;
@@ -69,8 +81,8 @@ const SearchResults = () => {
           <span>Back to Search</span>
         </button>
         <h1>Search Results</h1>
-        <button 
-          className="filter-toggle-button" 
+        <button
+          className="filter-toggle-button"
           onClick={() => setShowFilters(!showFilters)}
         >
           <FontAwesomeIcon icon={faFilter} />
@@ -82,12 +94,12 @@ const SearchResults = () => {
         {showFilters && (
           <div className="filter-panel">
             <h3>Filter Results</h3>
-            
+
             <div className="filter-group">
               <label>Job Type</label>
-              <select 
-                name="jobType" 
-                value={filters.jobType} 
+              <select
+                name="jobType"
+                value={filters?.jobType}
                 onChange={handleFilterChange}
               >
                 <option value="">All Types</option>
@@ -98,12 +110,12 @@ const SearchResults = () => {
                 <option value="Internship">Internship</option>
               </select>
             </div>
-            
+
             <div className="filter-group">
               <label>Category</label>
-              <select 
-                name="category" 
-                value={filters.category} 
+              <select
+                name="category"
+                value={filters?.category}
                 onChange={handleFilterChange}
               >
                 <option value="">All Categories</option>
@@ -116,12 +128,12 @@ const SearchResults = () => {
                 <option value="Other">Other</option>
               </select>
             </div>
-            
+
             <div className="filter-group">
               <label>Experience Level</label>
-              <select 
-                name="experienceLevel" 
-                value={filters.experienceLevel} 
+              <select
+                name="experienceLevel"
+                value={filters?.experienceLevel}
                 onChange={handleFilterChange}
               >
                 <option value="">All Levels</option>
@@ -131,7 +143,7 @@ const SearchResults = () => {
                 <option value="Executive">Executive</option>
               </select>
             </div>
-            
+
             <button className="apply-filters-btn" onClick={applyFilters}>
               Apply Filters
             </button>
@@ -140,17 +152,17 @@ const SearchResults = () => {
 
         <div className="search-results-list">
           <div className="results-summary">
-            Found <span className="results-count">{filteredJobs.length}</span> jobs
+            Found <span className="results-count">{filteredJobs?.length}</span> jobs
           </div>
-          
-          {filteredJobs.length === 0 ? (
+
+          {filteredJobs?.length === 0 ? (
             <div className="no-results">
               <FontAwesomeIcon icon={faSearch} className="no-results-icon" />
               <h3>No matching jobs found</h3>
               <p>Try adjusting your search criteria or filters</p>
             </div>
           ) : (
-            filteredJobs.map((job) => (
+            filteredJobs?.map((job) => (
               <div className="job-card search-result-card" key={job._id}>
                 <div className="job-header">
                   <div className="job-title">{job.title}</div>

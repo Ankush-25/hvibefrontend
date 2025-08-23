@@ -13,36 +13,10 @@ import {
   faClock,
   faGraduationCap,
   faCalendarAlt,
-  faChevronLeft,
-  faChevronRight,
+    
 } from "@fortawesome/free-solid-svg-icons";
 import "./UpperSection.css";
-
-function NextArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`custom-arrow next-arrow ${className}`}
-      style={{ ...style }}
-      onClick={onClick}
-    >
-      <FontAwesomeIcon icon={faChevronRight} color="#fff" />
-    </div>
-  );
-}
-
-function PreviousArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`custom-arrow prev-arrow ${className}`}
-      style={{ ...style }}
-      onClick={onClick}
-    >
-      <FontAwesomeIcon icon={faChevronLeft} color="#fff" />
-    </div>
-  );
-}
+import CarouselComponent from "../../../../components/CarouselComponent.jsx";
 
 function FresherJobCard({ data }) {
   const handleApplyClick = () => {
@@ -66,15 +40,8 @@ function FresherJobCard({ data }) {
           <FontAwesomeIcon icon={faMapMarkerAlt} className="internship-icon" />
           <span className="internship-location">{data.location}</span>
         </div>
-        {data.experience && (
-          <div className="internship-info">
-            <FontAwesomeIcon icon={faClock} className="internship-icon" />
-            <span className="internship-duration">{data.experience}</span>
-          </div>
-        )}
       </div>
-
-      <div className="internship-tags">
+      <div className="internship-tags gap-3">
         <span className="internship-tag">
           <FontAwesomeIcon icon={faGraduationCap} /> {data.education || "Any Graduate"}
         </span>
@@ -120,36 +87,6 @@ export function FreshersJobsCarousel() {
     fetchData();
   }, []);
 
-  const settings = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    initialSlide: 0,
-    prevArrow: <PreviousArrow />,
-    nextArrow: <NextArrow />,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 0,
-        },
-      },
-    ],
-  };
-
   if (loading) {
     return (
       <div className="internship-section">
@@ -160,28 +97,11 @@ export function FreshersJobsCarousel() {
   }
 
   return (
-    <div className="internship-section">
-      <h2 className="internship-section-title">Freshers Jobs</h2>
-      <p className="internship-section-subtitle">
-        Start your career journey with these exciting opportunities for freshers
-      </p>
-      
-      <div className="internship-carousel-container">
-        <Slider {...settings}>
-          {jobsData.map((job, index) => (
-            <div key={job.id || index} className="internship-slide">
-              <FresherJobCard data={job} />
-            </div>
-          ))}
-        </Slider>
-      </div>
-      
-      <div className="internship-section-footer">
-        <button className="view-all-btn">
-          View All Jobs
-          <FontAwesomeIcon icon={faUpRightFromSquare} />
-        </button>
-      </div>
-    </div>
+    <CarouselComponent
+    data={jobsData}
+    renderItem={(item)=>(<FresherJobCard data={item}/>)}
+    title="Freshers Jobs"
+    subtitle="Start your career journey with these exciting opportunities for freshers"
+    theme="dark" />
   );
 }

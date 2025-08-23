@@ -11,10 +11,6 @@ export function PopularJobtype({ theme = "light" }) {
 
   const handleCategoryClick = async (Title, category) => {
     // Navigate to jobs page with category filter
-    console.log(`/searchJobs?query=${encodeURIComponent(Title)}&category=${encodeURIComponent(category)}`)
-    console.log(Title);
-    console.log(category);
-
 
     try {
       const getCate = await axios.get(
