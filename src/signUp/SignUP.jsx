@@ -12,7 +12,11 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(typeOfUser);
+  console.log(username);
+  console.log(email);
+  console.log(password);
+  console.log(confirmPassword);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -41,7 +45,7 @@ function SignUp() {
     setIsLoading(true);
 
     try {
-      await register(username, email,typeOfUser, password);
+      await register(username, email, password, typeOfUser);
       navigate('/app');
     } catch (error) {
       console.error("SignUp Failed:", error);

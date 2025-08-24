@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import authService from "./services/authService";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -13,11 +12,20 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is authenticated on mount
-    const checkAuthStatus = () => {
+    const checkAuthStatus = async () => {
       try {
         if (authService.isAuthenticated()) {
           const userData = authService.getCurrentUser();
-          setCurrentUser(userData);
+          console.log('Auth check - User data from storage:', userData);
+          
+          // Validate user data
+          if (userData && userData.userId && userData.userType) {
+            setCurrentUser(userData);
+          } else {
+            console.warn('Invalid user data in storage, logging out');
+            await authService.logout();
+            setCurrentUser(null);
+          }
         }
       } catch (err) {
         console.error("Auth check failed:", err);
@@ -31,13 +39,26 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (email, password) => {
+  const login = async (email, password, userType) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await authService.login(email, password);
-      setCurrentUser(response.userId ? { userId: response.userId, ...response.user } : response);
-      return response;
+      const response = await authService.login(email, password, userType);
+      
+      // Ensure we have all required user data
+      if (!response.userId || !response.userType) {
+        throw new Error('Invalid login response from server');
+      }
+      
+      const userData = {
+        userId: response.userId,
+        userType: response.userType,
+        ...(response.user || {})
+      };
+      
+      // Update current user state
+      setCurrentUser(userData);
+      return userData;
     } catch (err) {
       setError(err.response?.data || "Login failed");
       throw err;
@@ -47,12 +68,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register function
-  const register = async (username, email, password) => {
+  const register = async (username, email, password,userType) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await authService.register(username, email, password);
+      const response = await authService.register(username, email, password,userType);
       setCurrentUser(response.userId ? { userId: response.userId, ...response.user } : response);
+      console.log(currentUser)
       return response;
     } catch (err) {
       setError(err.response?.data || "Registration failed");

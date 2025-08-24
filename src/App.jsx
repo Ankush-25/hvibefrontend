@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import JobApplicationPage from "./pages/JobApplicationPage";
 import { Profile } from "./profile/profile";
 import Layout from "./components/layout";
+import EmployerDashboard from "./EmployerDashboard/EmployerDashboard";
 
 function App() {
   return (
@@ -33,6 +34,19 @@ function App() {
         </Route>
 
         {/* Protected routes */}
+        {/* Employer Dashboard */}
+        <Route
+          path="/employer"
+          element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <EmployerDashboard />
+            </ProtectedRoute>
+          }
+        >
+        <Route index element={<EmployerDashboard />} />
+        </Route>
+
+        {/* App Dashboard */}
         <Route
           path="/app"
           element={
@@ -43,7 +57,7 @@ function App() {
         >
           <Route index element={<AppDashboard />} />
           <Route path="profile" element={<Profile />} />
-        </Route>
+        </Route>        
 
         {/* 404 route */}
         <Route path="*" element={<Error404 />} />

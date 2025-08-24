@@ -10,7 +10,6 @@ import {
   faUpRightFromSquare,
   faBuilding,
   faMapMarkerAlt,
-  faClock,
   faGraduationCap,
   faCalendarAlt,
     

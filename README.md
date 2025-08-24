@@ -1,3 +1,6 @@
+we have to remove this react-hook-form
+
+
 # HiringStore - Job Portal Platform
 HiringStore is a comprehensive job portal platform that connects job seekers with employers. The application provides a seamless experience for users to browse jobs, apply for positions, and manage applications, while employers can post job listings and manage candidates.
 

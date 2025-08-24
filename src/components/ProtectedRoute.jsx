@@ -4,11 +4,22 @@ import { useAuth } from '../authContext';
 
 /**
  * ProtectedRoute component to secure routes that require authentication
- * Redirects to login page if user is not authenticated
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components to render if authorized
+ * @param {string[]} [props.allowedRoles] - Array of allowed user roles
+ * @param {string} [props.redirectTo] - Path to redirect if not authorized (default: '/login' or '/' for role-based)
  */
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles, redirectTo = null }) => {
   const { currentUser, loading } = useAuth();
   const location = useLocation();
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log('ProtectedRoute - Current User:', currentUser);
+    if (currentUser && allowedRoles) {
+      console.log('User type:', currentUser.userType, 'Allowed roles:', allowedRoles);
+    }
+  }, [currentUser, allowedRoles]);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -22,12 +33,18 @@ const ProtectedRoute = ({ children }) => {
 
   // Redirect to login if not authenticated
   if (!currentUser) {
-    // Save the current location to redirect back after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Render the protected content if authenticated
+  // Check if user has required role
+  if (allowedRoles && !allowedRoles.includes(currentUser.userType)) {
+    // Redirect to specified path, or to employer/app based on user type
+    const redirectPath = redirectTo || (currentUser.userType === 'employer' ? '/employer' : '/app');
+    return <Navigate to={redirectPath} state={{ from: location.pathname }} replace />;
+  }
+
+  // Render the protected content if authorized
   return children;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

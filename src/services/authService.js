@@ -36,26 +36,41 @@ axios.interceptors.response.use(
  * @param {string} password - User password
  * @returns {Promise} - Response with user data
  */
-export const login = async (email, password) => {
+export const login = async (email, password, userType) => {
   try {
-    const response = await axios.post(`${Api_url}/login`, { email, password });
+    const response = await axios.post(`${Api_url}/login`, { email, password, userType });
     
     if (response.data && response.data.token) {
-      // Store token and user data
+      // Validate required fields
+      if (!response.data.userId || !response.data.userType) {
+        throw new Error('Invalid login response: missing required fields');
+      }
+      
+      // Store token and user ID
       localStorage.setItem(TOKEN_KEY, response.data.token);
       localStorage.setItem(USER_ID_KEY, response.data.userId);
       
-      // Store additional user data if available
-      if (response.data.user) {
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
-      }
+      // Prepare user data object
+      const userData = {
+        ...(response.data.user || {}),
+        userId: response.data.userId,
+        userType: response.data.userType
+      };
+      
+      // Store user data
+      localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+      localStorage.setItem("userType", response.data.userType);
       
       // Set session expiration (based on token expiry, default 8 hours)
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 8);
       localStorage.setItem('expiresAt', expiresAt.toISOString());
       
+      // Start token refresh timer
       startTokenRefreshTimer();
+      
+      // Return complete user data
+      return userData;
     }
     
     return response.data;
@@ -72,19 +87,20 @@ export const login = async (email, password) => {
  * @param {string} password - User password
  * @returns {Promise} - Response with user data
  */
-export const register = async (username, email, password) => {
+export const register = async (username, email, password, userType) => {
   try {
     const response = await axios.post(`${Api_url}/signup`, { 
       username, 
       email, 
-      password 
+      password,
+      userType 
     });
     
     if (response.data && response.data.token) {
       // Store token and user data
       localStorage.setItem(TOKEN_KEY, response.data.token);
       localStorage.setItem(USER_ID_KEY, response.data.userId);
-      
+      localStorage.setItem("userType", response.data.userType);
       // Store additional user data if available
       if (response.data.user) {
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
@@ -106,7 +122,8 @@ export const register = async (username, email, password) => {
 };
 
 /**
- * Logout user and clear session
+ * Logout user and clear session data
+ * @returns {Promise<void>}
  */
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
@@ -154,14 +171,34 @@ export const getCurrentUser = () => {
     return null;
   }
   
-  const userId = localStorage.getItem(USER_ID_KEY);
-  const authtoken = localStorage.getItem(TOKEN_KEY);
-  const userDataString = localStorage.getItem(USER_DATA_KEY);
-  
-  return {
-    userId,authtoken,
-    ...(userDataString ? JSON.parse(userDataString) : {})
-  };
+  try {
+    const userId = localStorage.getItem(USER_ID_KEY);
+    const authtoken = localStorage.getItem(TOKEN_KEY);
+    const userDataString = localStorage.getItem(USER_DATA_KEY);
+    const userType = localStorage.getItem("userType");
+    
+    // Parse the existing user data if it exists
+    const userData = userDataString ? JSON.parse(userDataString) : {};
+    
+    // Ensure all required fields are present
+    const user = {
+      userId,
+      authtoken,
+      userType: userType || userData.userType,
+      ...userData
+    };
+    
+    // Validate required fields
+    if (!user.userId || !user.userType) {
+      console.error('Invalid user data in storage:', user);
+      return null;
+    }
+    
+    return user;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
 };
 
 /**

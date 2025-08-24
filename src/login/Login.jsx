@@ -22,11 +22,26 @@ function Login() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      console.log("deta feeding in redux");
-      await dispatch(fetchProfile()).unwrap();
-      console.log("Data Feeded in Redux");
-      navigate('/app');
+      // First try to get user type from the login form or UI
+      // If not available, it will be handled by the backend
+      const userType = document.querySelector('input[name="userType"]:checked')?.value;
+      
+      // Call login with the userType if available
+      const userData = await login(email, password, userType);
+      
+      try {
+        await dispatch(fetchProfile()).unwrap();
+      } catch (profileError) {
+        console.warn("Profile fetch failed:", profileError);
+        // Continue even if profile fetch fails
+      }
+      
+      // Redirect based on user type
+      if (userData.userType === 'employer') {
+        navigate('/employer');
+      } else {
+        navigate('/app');
+      }
     } catch (error) {
       console.error("Login Failed:", error);
       if (error.response && error.response.data) {
@@ -70,7 +85,7 @@ function Login() {
             disabled={isLoading}
           />
           <label htmlFor="email">Email Address</label>
-          <div climage aassName="inputHighlight"></div>
+          <div className="inputHighlight"></div>
         </div>
 
         <div className="FormGroup">
@@ -85,6 +100,31 @@ function Login() {
           />
           <label htmlFor="password">Password</label>
           <div className="inputHighlight"></div>
+        </div>
+
+        <div className="user-type-selection">
+          <p className="user-type-label">Login as:</p>
+          <div className="radio-group">
+            <label className="radio-label">
+              <input
+                type="radio"
+                name="userType"
+                value="job_seeker"
+                defaultChecked
+                disabled={isLoading}
+              />
+              <span>Job Seeker</span>
+            </label>
+            <label className="radio-label">
+              <input
+                type="radio"
+                name="userType"
+                value="employer"
+                disabled={isLoading}
+              />
+              <span>Employer</span>
+            </label>
+          </div>
         </div>
 
         <button
