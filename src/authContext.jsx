@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
       try {
         if (authService.isAuthenticated()) {
           const userData = authService.getCurrentUser();
-          console.log('Auth check - User data from storage:', userData);
           
           // Validate user data
           if (userData && userData.userId && userData.userType) {

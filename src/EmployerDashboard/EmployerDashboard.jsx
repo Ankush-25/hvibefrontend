@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../authContext';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import JobPostingForm from './components/JobPostingForm';
+import EmployerProfile from './components/EmployerProfile';
 import styles from './EmployerDashboard.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -22,9 +23,15 @@ const EmployerDashboard = () => {
   const { currentUser, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('post-job');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  if (!currentUser) return <Navigate to="/login" />;
-  if (currentUser.userType !== 'employer') return <Navigate to="/" />;
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    } else if (currentUser.userType !== 'employer') {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -35,22 +42,33 @@ const EmployerDashboard = () => {
       setIsLoggingOut(false);
     }
   };
+  const handleProfileClick = () => {
+    setActiveTab('profile');
+  };
+
+  if (!currentUser) {
+    return null; // Will be redirected by useEffect
+  }
 
   return (
     <div className={styles.dashboard}>
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>
+          <h1 className={styles.title} onClick={() => navigate('/employer')} style={{ cursor: 'pointer' }}>
             <FontAwesomeIcon icon={faBuilding} />
             <span>Employer Dashboard</span>
+            {/* change the title to logo structure */}
           </h1>
           <div className={styles.userInfo}>
             <span className={styles.welcomeText}>
               Welcome back, <strong>{currentUser.name || 'Employer'}</strong>
             </span>
             <div className={styles.actions}>
-              <button className={`${styles.btn} ${styles.btnOutline}`}>
+              <button 
+                onClick={handleProfileClick}
+                className={`${styles.btn} ${styles.btnOutline}`}
+              >
                 <FontAwesomeIcon icon={faUser} className={styles.mr1} />
                 Profile
               </button>
@@ -69,57 +87,46 @@ const EmployerDashboard = () => {
           </div>
         </div>
 
-        {/* NAVIGATION */}
-        <div className={styles.navTabs}>
-          <nav className={styles.tabList}>
-            <button 
-              onClick={() => setActiveTab('post-job')} 
-              className={`${styles.tab} ${activeTab === 'post-job' ? styles.tabActive : ''}`}
-            >
-              <FontAwesomeIcon icon={faBriefcase} />
-              <span>Post a Job</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('my-jobs')} 
-              className={`${styles.tab} ${activeTab === 'my-jobs' ? styles.tabActive : ''}`}
-            >
-              <FontAwesomeIcon icon={faListCheck} />
-              <span>My Job Posts</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('applications')} 
-              className={`${styles.tab} ${activeTab === 'applications' ? styles.tabActive : ''}`}
-            >
-              <FontAwesomeIcon icon={faClipboardList} />
-              <span>Applications</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('analytics')} 
-              className={`${styles.tab} ${activeTab === 'analytics' ? styles.tabActive : ''}`}
-            >
-              <FontAwesomeIcon icon={faChartLine} />
-              <span>Analytics</span>
-            </button>
-          </nav>
-        </div>
-      </header>
-
-      {/* MAIN CONTENT */}
-      <main className={styles.mainContent}>
-        {activeTab === 'post-job' && (
-          <div className={styles.dashboardCard}>
-            <div className={styles.cardHeader}>
-              <h2 className={styles.cardTitle}>
+        {/* NAVIGATION - Only show on main dashboard */}
+        {!window.location.pathname.includes('/profile') && (
+          <div className={styles.navTabs}>
+            <nav className={styles.tabList}>
+              <button 
+                onClick={() => setActiveTab('post-job')} 
+                className={`${styles.tab} ${activeTab === 'post-job' ? styles.tabActive : ''}`}
+              >
                 <FontAwesomeIcon icon={faBriefcase} />
-                <span>Post a New Job</span>
-              </h2>
-            </div>
-            <div className={styles.cardBody}>
-              <JobPostingForm />
-            </div>
+                <span>Post a Job</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('my-jobs')} 
+                className={`${styles.tab} ${activeTab === 'my-jobs' ? styles.tabActive : ''}`}
+              >
+                <FontAwesomeIcon icon={faListCheck} />
+                <span>My Job Posts</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('applications')} 
+                className={`${styles.tab} ${activeTab === 'applications' ? styles.tabActive : ''}`}
+              >
+                <FontAwesomeIcon icon={faClipboardList} />
+                <span>Applications</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('analytics')} 
+                className={`${styles.tab} ${activeTab === 'analytics' ? styles.tabActive : ''}`}
+              >
+                <FontAwesomeIcon icon={faChartLine} />
+                <span>Analytics</span>
+              </button>
+            </nav>
           </div>
         )}
+      </header>
 
+      <main className={styles.mainContent}>
+        {activeTab === 'post-job' && <JobPostingForm />}
+        
         {activeTab === 'my-jobs' && (
           <div className={styles.dashboardCard}>
             <div className={styles.cardHeader}>
@@ -208,6 +215,8 @@ const EmployerDashboard = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'profile' && <EmployerProfile />}
       </main>
     </div>
   );

@@ -12,14 +12,6 @@ import { useAuth } from '../authContext';
 const ProtectedRoute = ({ children, allowedRoles, redirectTo = null }) => {
   const { currentUser, loading } = useAuth();
   const location = useLocation();
-  
-  // Debug logging
-  React.useEffect(() => {
-    console.log('ProtectedRoute - Current User:', currentUser);
-    if (currentUser && allowedRoles) {
-      console.log('User type:', currentUser.userType, 'Allowed roles:', allowedRoles);
-    }
-  }, [currentUser, allowedRoles]);
 
   // Show loading state while checking authentication
   if (loading) {

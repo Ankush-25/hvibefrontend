@@ -4,6 +4,7 @@ import { useAuth } from '../../authContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import styles from './JobPostingForm.module.css';
+import { Api_url } from '../../globalConfig';
 
 const JobPostingForm = () => {
   const { currentUser } = useAuth();
@@ -18,13 +19,12 @@ const JobPostingForm = () => {
       jobType: 'Full-time',
       salary: '',
       description: '',
-      requirements: '',
-      responsibilities: '',
-      experienceLevel: 'Entry Level',
-      education: '',
-      skills: '',
+      category: 'IT',
+      experienceLevel: 0,
+      skillsRequired: '',
     },
   });
+  
 
   const onSubmit = async (data) => {
     if (!currentUser) {
@@ -36,20 +36,26 @@ const JobPostingForm = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/jobs', {
+      const jobData = {
         ...data,
         postedBy: currentUser.userId,
-        company: currentUser.company || data.company,
-        skills: data.skills.split(',').map(skill => skill.trim()), // Convert comma-separated string to array
-      }, {
+        company: data.company,
+        skillsRequired: data.skillsRequired 
+          ? data.skillsRequired.split(',').map(skill => skill.trim())
+          : [],
+        experienceLevel: Number(data.experienceLevel),
+        salary: data.salary ? Number(data.salary) : undefined,
+      };
+
+      const response = await axios.post(`${Api_url}/postJob`, jobData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${currentUser.token}`
         }
       });
 
       if (response.data.success) {
-        toast.success('Job posted successfully!');
+        toast.success('Job posted successfully!'); 
         reset();
       }
     } catch (err) {
@@ -130,57 +136,89 @@ const JobPostingForm = () => {
           )}
         </div>
 
-        {/* Job Type and Experience Level */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        {/* Job Type, Category, and Experience Level */}
+        <div className={styles.formRow}>
           <div className={styles.formGroup}>
-            <label htmlFor="jobType" className={styles.formLabel}>
+            <label htmlFor="jobType" className={`${styles.formLabel} ${styles.required}`}>
               Job Type
             </label>
             <select
               id="jobType"
-              {...register('jobType')}
+              {...register('jobType', { required: 'Job type is required' })}
               className={styles.formControl}
             >
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Contract">Contract</option>
-              <option value="Temporary">Temporary</option>
-              <option value="Internship">Internship</option>
               <option value="Freelance">Freelance</option>
+              <option value="Internship">Internship</option>
             </select>
+            {errors.jobType && (
+              <p className={styles.errorMessage}>{errors.jobType.message}</p>
+            )}
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="experienceLevel" className={styles.formLabel}>
-              Experience Level
+            <label htmlFor="category" className={`${styles.formLabel} ${styles.required}`}>
+              Category
             </label>
             <select
-              id="experienceLevel"
-              {...register('experienceLevel')}
+              id="category"
+              {...register('category', { required: 'Category is required' })}
               className={styles.formControl}
             >
-              <option value="Entry Level">Entry Level</option>
-              <option value="Mid Level">Mid Level</option>
-              <option value="Senior Level">Senior Level</option>
-              <option value="Lead">Lead</option>
-              <option value="Manager">Manager</option>
-              <option value="Executive">Executive</option>
+              <option value="IT">IT</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Design">Design</option>
+              <option value="Finance">Finance</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Education">Education</option>
+              <option value="Other">Other</option>
             </select>
+            {errors.category && (
+              <p className={styles.errorMessage}>{errors.category.message}</p>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="experienceLevel" className={`${styles.formLabel} ${styles.required}`}>
+              Experience (Years)
+            </label>
+            <input
+              id="experienceLevel"
+              type="number"
+              min="0"
+              step="0.5"
+              {...register('experienceLevel', { 
+                required: 'Experience level is required',
+                min: { value: 0, message: 'Experience cannot be negative' }
+              })}
+              className={styles.formControl}
+              placeholder="e.g., 2.5"
+            />
+            {errors.experienceLevel && (
+              <p className={styles.errorMessage}>{errors.experienceLevel.message}</p>
+            )}
           </div>
         </div>
 
         {/* Salary */}
         <div className={styles.formGroup}>
           <label htmlFor="salary" className={styles.formLabel}>
-            Salary Range
+            Salary (Annual)
           </label>
-          <input
-            id="salary"
-            type="text"
-            {...register('salary')}
-            className={styles.formControl}
-            placeholder="e.g., $50,000 - $70,000 per year"
-          />
+          <div className={styles.inputGroup}>
+            <span className={styles.inputPrefix}>$</span>
+            <input
+              id="salary"
+              type="number"
+              min="0"
+              step="1000"
+              {...register('salary')}
+              className={styles.formControl}
+              placeholder="e.g., 60000"
+            />
+          </div>
         </div>
 
         {/* Job Description */}
@@ -200,52 +238,19 @@ const JobPostingForm = () => {
           )}
         </div>
 
-        {/* Requirements */}
+        {/* Skills Required */}
         <div className={styles.formGroup}>
-          <label htmlFor="requirements" className={`${styles.formLabel} ${styles.required}`}>
-            Requirements
-          </label>
-          <textarea
-            id="requirements"
-            rows={4}
-            {...register('requirements', { required: 'Requirements are required' })}
-            className={`${styles.formControl} ${styles.textarea}`}
-            placeholder="List the requirements for this position..."
-          />
-          {errors.requirements && (
-            <p className={styles.errorMessage}>{errors.requirements.message}</p>
-          )}
-        </div>
-
-        {/* Skills */}
-        <div className={styles.formGroup}>
-          <label htmlFor="skills" className={`${styles.formLabel} ${styles.required}`}>
-            Required Skills (comma separated)
+          <label htmlFor="skillsRequired" className={styles.formLabel}>
+            Required Skills
           </label>
           <input
-            id="skills"
+            id="skillsRequired"
             type="text"
-            {...register('skills', { required: 'At least one skill is required' })}
+            {...register('skillsRequired')}
             className={styles.formControl}
-            placeholder="e.g., JavaScript, React, Node.js"
+            placeholder="e.g., JavaScript, React, Node.js (comma separated)"
           />
-          {errors.skills && (
-            <p className={styles.errorMessage}>{errors.skills.message}</p>
-          )}
-        </div>
-
-        {/* Education */}
-        <div className={styles.formGroup}>
-          <label htmlFor="education" className={styles.formLabel}>
-            Education Requirements
-          </label>
-          <input
-            id="education"
-            type="text"
-            {...register('education')}
-            className={styles.formControl}
-            placeholder="e.g., Bachelor's degree in Computer Science or related field"
-          />
+          <p className={styles.helperText}>Separate multiple skills with commas</p>
         </div>
 
         <div className={styles.buttonGroup}>

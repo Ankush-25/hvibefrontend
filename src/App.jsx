@@ -43,7 +43,11 @@ function App() {
             </ProtectedRoute>
           }
         >
-        <Route index element={<EmployerDashboard />} />
+          <Route index element={<EmployerDashboard />} />
+          <Route path="profile" element={<EmployerDashboard />} />
+          <Route path="jobs" element={<EmployerDashboard />} />
+          <Route path="applications" element={<EmployerDashboard />} />
+          <Route path="analytics" element={<EmployerDashboard />} />
         </Route>
 
         {/* App Dashboard */}
