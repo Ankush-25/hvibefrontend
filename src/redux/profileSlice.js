@@ -32,6 +32,9 @@ const initialState = {
         skills: []
     },
     savedJobs: [],
+    Recruiter:{
+        companies:[],
+      },
     createdAt: '',
     loading: false,
     error: null,

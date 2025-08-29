@@ -16,6 +16,10 @@
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--gray-300);
 }
+.companyGroup {
+  display: flex;
+  gap: 1rem;
+}
 
 .formGroup {
   margin-bottom: 1.5rem;

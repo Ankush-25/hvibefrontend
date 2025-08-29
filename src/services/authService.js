@@ -39,6 +39,7 @@ axios.interceptors.response.use(
 export const login = async (email, password, userType) => {
   try {
     const response = await axios.post(`${Api_url}/login`, { email, password, userType });
+    console.log(response.data);
     
     if (response.data && response.data.token) {
       // Validate required fields

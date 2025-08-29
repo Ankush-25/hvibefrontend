@@ -3,7 +3,7 @@ import { useAuth } from '../../authContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import styles from './EmployerProfile.module.css';
+import styles from './CompanyProfile.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faBuilding, 
@@ -16,7 +16,7 @@ import {
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
-const EmployerProfile = () => {
+const CompanyProfile = () => {
   const { currentUser, updateUser } = useAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
@@ -329,4 +329,4 @@ const EmployerProfile = () => {
   );
 };
 
-export default EmployerProfile;
+export default CompanyProfile;

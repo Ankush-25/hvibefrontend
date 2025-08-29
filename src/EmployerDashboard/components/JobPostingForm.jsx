@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import styles from './JobPostingForm.module.css';
 import { Api_url } from '../../globalConfig';
 
-const JobPostingForm = () => {
+const JobPostingForm = ({ userCompany }) => {
   const { currentUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -107,12 +107,19 @@ const JobPostingForm = () => {
             <label htmlFor="company" className={`${styles.formLabel} ${styles.required}`}>
               Company Name
             </label>
-            <input
-              id="company"
-              type="text"
-              {...register('company', { required: 'Company name is required' })}
-              className={styles.formControl}
-            />
+            <div className={styles.companyGroup}>
+            {userCompany.map((company, index) => (
+              <div key={index} >
+                <input
+                  type="radio"
+                  id={`company-${index}`}
+                  value={company.name}
+                  {...register('company', { required: 'Company name is required' })}
+                />
+                <label htmlFor={`company-${index}`}>{company.name}</label>
+              </div>
+            ))}
+            </div>
             {errors.company && (
               <p className={styles.errorMessage}>{errors.company.message}</p>
             )}

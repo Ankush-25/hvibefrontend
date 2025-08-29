@@ -150,7 +150,7 @@ const SearchResults = () => {
           </div>
         )}
 
-        <div className="search-results-list">
+        <div className="jobs-list">
           <div className="results-summary">
             Found <span className="results-count">{filteredJobs?.length}</span> jobs
           </div>

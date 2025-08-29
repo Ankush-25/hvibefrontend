@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../authContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import JobPostingForm from './components/JobPostingForm';
-import EmployerProfile from './components/EmployerProfile';
+import CompanyProfile from './components/CompanyProfile';
 import styles from './EmployerDashboard.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -18,14 +18,29 @@ import {
   faChartBar,
   faClipboardList
 } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import { Api_url } from '../globalConfig';
+import { useSelector } from 'react-redux';
+import { Profile } from '../profile/profile';
+import { Imagepaths } from '../assets/Global_Need_files/ImagesPaths';
 
 const EmployerDashboard = () => {
   const { currentUser, logout } = useAuth();
+  const recruiterDetails=useSelector((state)=>state.usrProfile);
+  console.log(recruiterDetails);
+
   const [activeTab, setActiveTab] = useState('post-job');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [userCompany, setUserCompany] = useState([]);
   const navigate = useNavigate();
+  const FetchRecruiterCompany = async()=> {
+    const userCompany=await axios.get(`${Api_url}/allcompanies`);
+    console.log(userCompany.data);
+    setUserCompany(userCompany.data);
+  };
   
   useEffect(() => {
+    FetchRecruiterCompany();    
     if (!currentUser) {
       navigate('/login');
     } else if (currentUser.userType !== 'employer') {
@@ -42,8 +57,12 @@ const EmployerDashboard = () => {
       setIsLoggingOut(false);
     }
   };
-  const handleProfileClick = () => {
-    setActiveTab('profile');
+  const handleCompanyProfileClick = () => {
+    setActiveTab('CompanyProfile');
+  };
+
+  const handleRecruiterProfileClick = () => {
+    setActiveTab('RecruiterProfile');
   };
 
   if (!currentUser) {
@@ -56,22 +75,29 @@ const EmployerDashboard = () => {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <h1 className={styles.title} onClick={() => navigate('/employer')} style={{ cursor: 'pointer' }}>
-            <FontAwesomeIcon icon={faBuilding} />
-            <span>Employer Dashboard</span>
-            {/* change the title to logo structure */}
+            <img src={Imagepaths.HiringstoreslogoPath} style={{height: '50px' }} alt="HiringStores Logo" />
+            <span className={styles.welcomeText}>
+              Welcome back, <strong>{currentUser?.name || 'Employer'}</strong>
+            </span>
           </h1>
           <div className={styles.userInfo}>
-            <span className={styles.welcomeText}>
-              Welcome back, <strong>{currentUser.name || 'Employer'}</strong>
-            </span>
             <div className={styles.actions}>
               <button 
-                onClick={handleProfileClick}
+                onClick={handleCompanyProfileClick}
                 className={`${styles.btn} ${styles.btnOutline}`}
               >
                 <FontAwesomeIcon icon={faUser} className={styles.mr1} />
-                Profile
+                Company Profile
               </button>
+
+              <button 
+                onClick={handleRecruiterProfileClick}
+                className={`${styles.btn} ${styles.btnOutline}`}
+              >
+                <FontAwesomeIcon icon={faUser} className={styles.mr1} />
+                Your Profile
+              </button>
+
               <button 
                 className={`${styles.btn} ${styles.btnPrimary} ${isLoggingOut ? styles.btnLoading : ''}`}
                 onClick={handleLogout}
@@ -125,7 +151,7 @@ const EmployerDashboard = () => {
       </header>
 
       <main className={styles.mainContent}>
-        {activeTab === 'post-job' && <JobPostingForm />}
+        {activeTab === 'post-job' && <JobPostingForm userCompany={userCompany} />}
         
         {activeTab === 'my-jobs' && (
           <div className={styles.dashboardCard}>
@@ -216,7 +242,8 @@ const EmployerDashboard = () => {
           </div>
         )}
 
-        {activeTab === 'profile' && <EmployerProfile />}
+        {activeTab === 'RecruiterProfile' && <Profile />}
+        {activeTab === 'CompanyProfile' && <CompanyProfile />}
       </main>
     </div>
   );
