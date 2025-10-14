@@ -12,6 +12,7 @@ import JobApplicationPage from "./pages/JobApplicationPage";
 import { Profile } from "./profile/profile";
 import Layout from "./components/layout";
 import EmployerDashboard from "./EmployerDashboard/EmployerDashboard";
+import { JobDetailPage } from "./jobs/jobDetail";
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/search-results" element={<SearchResults />} /> 
           {/* QueryUrl based search */}
-          <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
+          {/* <Route path="/jobs/:jobId" element={<JobApplicationPage />} /> */}
+          <Route path="/job/:jobId" element= {<JobDetailPage/>}/>
           <Route path="/Career" element={<LandingPageParent />} />
           <Route path="/privacy-policy" element={<LandingPageParent />} />
           <Route path="/contact-Us" element={<LandingPageParent />} />
