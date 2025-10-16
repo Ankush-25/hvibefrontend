@@ -3,7 +3,7 @@
     height: 27px;
     display: flex;
     align-items: center;
-    padding: 10px;
+
 }
 
 .search-error {
@@ -31,12 +31,12 @@
     margin-left: 5px;
 }
 
-.Tagline {
+/* .Tagline {
     padding-top: 100px;
     display: flex;
     justify-content: center;
     padding-bottom: 31px;
-}
+} */
 
 .inputSeprator {
     color: #635555;

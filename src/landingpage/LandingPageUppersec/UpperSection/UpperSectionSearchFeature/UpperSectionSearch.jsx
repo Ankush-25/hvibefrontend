@@ -1,4 +1,4 @@
-import { SearchBar, SearchButton, SearchInput, UpperSearchAndTextWrapper } from "./UpperSectionSearchStyles";
+import { MobileSearchBar, SearchBar, SearchButton, SearchInput, UpperSearchAndTextWrapper } from "./UpperSectionSearchStyles";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import "./UpperSection.css"
@@ -16,7 +16,7 @@ export function UpperSectionSearch() {
 
   const handleOnChangeInput = (e, index) => {
     const newVal = [...searchValues];
-    newVal[index] = e.target.value;
+    newVal[index?index:0] = e.target.value;
     setSearchValues(newVal);
   }
 
@@ -62,11 +62,29 @@ export function UpperSectionSearch() {
 
   return (
     <UpperSearchAndTextWrapper>
-      <h1 className="Tagline">
+      <h1 className="flex justify-center pb-[31px] pt-[100px] sm:text-sm font-bold">
         Hiring Made Simple - Find Your Dream Job Now!
       </h1>
-      <SearchBar>
-        <div className="SearchIcondiv">
+       <MobileSearchBar className="block md:hidden">
+        <div className="border-1 border-white">
+          <SearchInput
+            className="text-black text-bold !pl-5 !w-3/2"
+            placeholder="Designation Or Location Or Experience"
+            name="MobileSearch"
+            value ={searchValues[0]}
+            onChange={(e)=>handleOnChangeInput(e)}/>
+        </div>
+        <div className="flex pl-26 items-center"> 
+          <div className="bg-blue-500 ml-[6px] rounded-[29px] ">
+          <FontAwesomeIcon 
+            className="text-base m-auto p-[13px] "
+            icon={faMagnifyingGlass} 
+            />
+            </div>
+        </div>
+      </MobileSearchBar>
+      <SearchBar className="hidden sm:block">
+        <div className="SearchIcondiv"> 
           <FontAwesomeIcon 
             className="SearchIcon"
             icon={faMagnifyingGlass} 
@@ -76,6 +94,7 @@ export function UpperSectionSearch() {
           <React.Fragment key={index}>
             {index > 0 && <div className="inputSeprator"> | </div>}
             <SearchInput
+              className="text-black"
               index={index}
               placeholder={placeholder}
               value={searchValues[index]}
