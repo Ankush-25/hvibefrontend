@@ -32,9 +32,9 @@ const initialState = {
         skills: []
     },
     savedJobs: [],
-    Recruiter:{
-        companies:[],
-      },
+    Recruiter: {
+        companies: [],
+    },
     createdAt: '',
     loading: false,
     error: null,
@@ -58,12 +58,12 @@ const usrProfileSlice = createSlice({
             const { section, value } = action.payload;
             state.profile[section] = value;
         },
-        deleteNestedFields:(state, action)=>{
-            const{section, index}= action.payload;
-            state.profile[section] = state.profile[section].filter((_,i)=>(i!==index));
+        deleteNestedFields: (state, action) => {
+            const { section, index } = action.payload;
+            state.profile[section] = state.profile[section].filter((_, i) => (i !== index));
         },
         updateNestedFields: (state, action) => {
-            const { section,index, value } = action.payload;
+            const { section, index, value } = action.payload;
             state.profile[section][index] = value;
         },
         setLoading: (state, action) => {

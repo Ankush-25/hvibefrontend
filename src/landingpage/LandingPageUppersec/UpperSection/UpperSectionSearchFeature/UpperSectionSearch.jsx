@@ -83,7 +83,7 @@ export function UpperSectionSearch() {
             </div>
         </div>
       </MobileSearchBar>
-      <SearchBar className="hidden sm:block">
+      <SearchBar className="hidden xs:block">
         <div className="SearchIcondiv"> 
           <FontAwesomeIcon 
             className="SearchIcon"

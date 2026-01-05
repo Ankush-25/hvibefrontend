@@ -8,15 +8,11 @@ function SignUp() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [typeOfUser, settypeOfUser] = useState("");
+  const [typeOfUser, settypeOfUser] = useState("job_seeker");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  console.log(typeOfUser);
-  console.log(username);
-  console.log(email);
-  console.log(password);
-  console.log(confirmPassword);
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -46,10 +42,19 @@ function SignUp() {
 
     try {
       await register(username, email, password, typeOfUser);
-      navigate('/app');
+      // Redirect based on user type
+      if (typeOfUser === "employer") {
+        navigate("/employer");
+      } else {
+        navigate("/app");
+      }
     } catch (error) {
       console.error("SignUp Failed:", error);
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         setErrorMessage(error.response.data.message);
       } else {
         setErrorMessage("Registration failed. Please try again.");
@@ -71,11 +76,7 @@ function SignUp() {
         <p className="subtitle">Join our community today</p>
       </div>
 
-      {errorMessage && (
-        <div className="error-message">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       <form className="LoginForm" onSubmit={handleSubmit}>
         <div className="FormGroup">
@@ -117,7 +118,6 @@ function SignUp() {
           >
             <option value="job_seeker">Job Seeker</option>
             <option value="employer">Recruiter</option>
-            <option value="admin">Admin</option>
           </select>
         </div>
 
@@ -150,11 +150,11 @@ function SignUp() {
         </div>
 
         <button
-          className={`LoginButton ${isLoading ? 'loading' : ''}`}
+          className={`LoginButton ${isLoading ? "loading" : ""}`}
           type="submit"
           disabled={isLoading}
         >
-          <span>{isLoading ? 'Creating account...' : 'Sign Up'}</span>
+          <span>{isLoading ? "Creating account..." : "Sign Up"}</span>
           <div className="buttonHighlight"></div>
         </button>
       </form>
