@@ -1,36 +1,43 @@
-import { LandingPageParent } from "./landingpage/LandingPageParent";
+// Page imports from new structure
+import LoginPage from "./pages/auth/LoginPage";
+import SignUpPage from "./pages/auth/SignUpPage";
+import AboutPage from "./pages/AboutPage";
+import BlogsPage from "./pages/BlogsPage";
+import CareerPage from "./pages/CareerPage";
+import ContactPage from "./pages/ContactPage";
+import Error404Page from "./pages/Error404Page";
+import { JobDetailPage } from "./pages/jobs/JobDetailPage";
+
+// Component imports from new structure
+import ProtectedRoute from "./components/shared/ProtectedRoute";
+import Layout from "./components/layout/Layout";
+
+// Legacy imports (to be migrated)
+import { LandingPageParent } from "./modules/landingpage/LandingPageParent";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignUp from "./signUp/SignUP";
-import Blogs from "./Blogs/Blogs";
-import Error404 from "./Error404";
-import AboutUs from "./aboutPage/AboutUs";
-import Login from "./login/Login";
 import AppDashboard from "./App/AppDashboard";
-import SearchResults from "./landingpage/LandingPageUppersec/UpperSection/UpperSectionSearchFeature/SearchResults";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { Profile } from "./profile/profile";
-import Layout from "./components/layout";
-import EmployerDashboard from "./EmployerDashboard/EmployerDashboard";
-import { JobDetailPage } from "./jobs/jobDetail";
+import SearchResults from "./modules/landingpage/LandingPageUppersec/UpperSection/UpperSectionSearchFeature/SearchResults";
+import { Profile } from "./modules/profile/profile";
+import EmployerDashboard from "./modules/employer/EmployerDashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signUp" element={<SignUpPage />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPageParent />} />
-          <Route path="/Blogs" element={<Blogs />} />
-          <Route path="/aboutUs" element={<AboutUs />} />
-          <Route path="/search-results" element={<SearchResults />} /> 
+          <Route path="/Blogs" element={<BlogsPage />} />
+          <Route path="/aboutUs" element={<AboutPage />} />
+          <Route path="/search-results" element={<SearchResults />} />
           {/* QueryUrl based search */}
           {/* <Route path="/jobs/:jobId" element={<JobApplicationPage />} /> */}
-          <Route path="/job/:jobId" element= {<JobDetailPage/>}/>
-          <Route path="/Career" element={<LandingPageParent />} />
+          <Route path="/job/:jobId" element={<JobDetailPage />} />
+          <Route path="/Career" element={<CareerPage />} />
           <Route path="/privacy-policy" element={<LandingPageParent />} />
-          <Route path="/contact-Us" element={<LandingPageParent />} />
+          <Route path="/contact-Us" element={<ContactPage />} />
           <Route path="/Browse_Jobs" element={<LandingPageParent />} />
         </Route>
 
@@ -62,10 +69,10 @@ function App() {
         >
           <Route index element={<AppDashboard />} />
           <Route path="profile" element={<Profile />} />
-        </Route>        
+        </Route>
 
         {/* 404 route */}
-        <Route path="*" element={<Error404 />} />
+        <Route path="*" element={<Error404Page />} />
       </Routes>
     </BrowserRouter>
   );
