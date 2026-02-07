@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { recommendedJobs } from "../landingpage/Var";
+import { recommendedJobs } from "../modules/landingpage/Var";
 import CarouselComponent from "../components/ui/CarouselComponent";
 import JobCard from "../components/ui/JobCard";
 import axios from "axios";

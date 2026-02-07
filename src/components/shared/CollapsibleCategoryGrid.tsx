@@ -74,18 +74,17 @@ const CollapsibleCategoryGrid = ({
     return (
         <div className={cn(
             "w-full py-15",
-            theme === "light" ? "bg-gray-900 text-white border-t border-b border-gray-800" : "bg-gray-900 text-white"
+            "bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white border-t border-b border-gray-200 dark:border-gray-800"
         )}>
             <div className="text-center mb-10">
                 <h2 className={cn(
                     "text-4xl font-bold mb-4 relative inline-block",
-                    "after:content-[''] after:absolute after:-bottom-2.5 after:left-0 after:w-full after:h-1 after:bg-gradient-to-r after:from-purple-600 after:to-blue-500 after:rounded-md"
+                    "after:content-[''] after:absolute after:-bottom-2.5 after:left-0 after:w-full after:h-1 after:bg-gradient-to-r after:from-secondary-500 after:to-primary-500 after:rounded-md"
                 )}>{title}</h2>
                 {subtitle && (
-                    <p className={cn(
-                        "text-base text-gray-400 max-w-md mx-auto",
-                        theme === "dark" && "text-gray-500"
-                    )}>{subtitle}</p>
+                    <p className="text-base text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                        {subtitle}
+                    </p>
                 )}
             </div>
 
@@ -117,9 +116,8 @@ const CollapsibleCategoryGrid = ({
                     <button
                         className={cn(
                             "flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 ease-in-out",
-                            "bg-gradient-to-r from-purple-600 to-blue-500 text-white hover:from-purple-700 hover:to-blue-600",
-                            "hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900",
-                            theme === "dark" && "bg-gradient-to-r from-blue-600 to-purple-600"
+                            "bg-gradient-to-r from-secondary-500 to-primary-500 text-white hover:from-secondary-600 hover:to-primary-600",
+                            "hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
                         )}
                         onClick={toggleExpand}
                         aria-expanded={isExpanded}

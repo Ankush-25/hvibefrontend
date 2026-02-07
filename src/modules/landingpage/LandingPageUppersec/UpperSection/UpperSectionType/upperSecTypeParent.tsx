@@ -39,6 +39,7 @@ export function PopularJobtype({ theme = "light" }: PopularJobtypeProps) {
       subtitle="Explore jobs by category"
       theme={theme}
       onCategoryClick={handleCategoryClick}
+      initialVisibleCount={5}
     />
   );
 }
