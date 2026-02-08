@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { recommendedJobs } from "../landingpage/Var";
-import CarouselComponent from "../components/CarouselComponent";
-import JobCard from "../components/JobCard";
+import { recommendedJobs } from "../modules/landingpage/Var";
+import CarouselComponent from "../components/ui/CarouselComponent";
+import JobCard from "../components/ui/JobCard";
 import axios from "axios";
-import { Api_url } from "../globalConfig";
+import { Api_url } from "../config/globalConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { cn } from "../lib/utils";
@@ -108,10 +108,10 @@ const RecomendedJobsCrousel = ({ theme = "light" }: RecomendedJobsCrouselProps) 
   };
 
   const viewAllButton = (
-    <button 
+    <button
       className={cn(
         "flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-full font-medium text-sm hover:from-purple-700 hover:to-blue-600 transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-      )} 
+      )}
       onClick={handleViewAllJobs}
     >
       View All <FontAwesomeIcon icon={faArrowRight} />

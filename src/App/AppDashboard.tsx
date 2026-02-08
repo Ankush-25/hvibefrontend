@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import HeroSection from "./DashboardHeroSec/HeroSecDashboard";
 import RecomendedJobsCrousel from "./RecomendedJob";
-import { useAuth } from "../authContext";
+import { useAuth } from "../context/AuthContext";
 
 function AppDashboard() {
   const [userName, setUserName] = useState<string>("");
