@@ -1,3 +1,5 @@
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Imagepaths } from "../../assets/Global_Need_files/ImagesPaths";
 import { useState, FormEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -9,6 +11,8 @@ function SignUpPage({ }: SignupProps) {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [typeOfUser, setTypeOfUser] = useState<UserTypeOption>("job_seeker");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -90,16 +94,22 @@ function SignUpPage({ }: SignupProps) {
                 "p-8 rounded-[24px] shadow-xl flex flex-col gap-6 w-full max-w-md transition-all duration-300",
                 "bg-white dark:bg-secondary-900 border border-primary-100 dark:border-secondary-800"
             )}>
-                {/* User Type Toggle */}
-                <div className="flex p-1 bg-primary-50 dark:bg-secondary-800 rounded-[12px] border border-primary-200 dark:border-secondary-700">
+                {/* User Type Slider Toggle */}
+                <div className="relative flex p-1 bg-primary-100 dark:bg-secondary-800 rounded-full border border-primary-200 dark:border-secondary-700 h-14 select-none">
+                    <div
+                        className={cn(
+                            "absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-green-400 dark:bg-primary-500 border-[2px] border-primary-800 dark:border-primary-300 shadow-md transition-all duration-300 ease-in-out z-0",
+                            typeOfUser === 'job_seeker' ? "left-1" : "left-[calc(50%+0px)]"
+                        )}
+                    />
                     <button
                         type="button"
                         onClick={() => setTypeOfUser('job_seeker')}
                         className={cn(
-                            "flex-1 py-2 text-sm font-semibold rounded-[8px] transition-all duration-200",
+                            "flex-1 relative z-20 text-sm font-bold transition-colors duration-300 rounded-full bg-transparent",
                             typeOfUser === 'job_seeker'
-                                ? "bg-white dark:bg-secondary-700 text-primary-900 dark:text-primary-50 shadow-sm"
-                                : "text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                                ? "text-primary-50 dark:text-primary-900"
+                                : "text-primary-500 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-200"
                         )}
                     >
                         Job Seeker
@@ -108,10 +118,10 @@ function SignUpPage({ }: SignupProps) {
                         type="button"
                         onClick={() => setTypeOfUser('employer')}
                         className={cn(
-                            "flex-1 py-2 text-sm font-semibold rounded-[8px] transition-all duration-200",
+                            "flex-1 relative z-20 text-sm font-bold transition-colors duration-300 rounded-full bg-transparent",
                             typeOfUser === 'employer'
-                                ? "bg-white dark:bg-secondary-700 text-primary-900 dark:text-primary-50 shadow-sm"
-                                : "text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                                ? "text-primary-50 dark:text-primary-900"
+                                : "text-primary-500 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-200"
                         )}
                     >
                         Employer
@@ -132,12 +142,12 @@ function SignUpPage({ }: SignupProps) {
                             required
                             disabled={isLoading}
                             className={cn(
-                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "w-full px-4 py-3.5 border-[0.5px] rounded-[12px] transition-all duration-200 outline-none font-medium",
                                 "bg-primary-50 dark:bg-secondary-800/50",
                                 "border-primary-200 dark:border-secondary-700",
                                 "text-primary-900 dark:text-primary-50",
                                 "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
-                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "focus:border-[2px] focus:border-primary-900 dark:focus:border-primary-100 focus:ring-0",
                                 "disabled:opacity-50 disabled:cursor-not-allowed"
                             )}
                         />
@@ -156,12 +166,12 @@ function SignUpPage({ }: SignupProps) {
                             required
                             disabled={isLoading}
                             className={cn(
-                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "w-full px-4 py-3.5 border-[0.5px] rounded-[12px] transition-all duration-200 outline-none font-medium",
                                 "bg-primary-50 dark:bg-secondary-800/50",
                                 "border-primary-200 dark:border-secondary-700",
                                 "text-primary-900 dark:text-primary-50",
                                 "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
-                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "focus:border-[2px] focus:border-primary-900 dark:focus:border-primary-100 focus:ring-0",
                                 "disabled:opacity-50 disabled:cursor-not-allowed"
                             )}
                         />
@@ -171,48 +181,66 @@ function SignUpPage({ }: SignupProps) {
                         <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
                             Password
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Min 6 characters"
-                            required
-                            disabled={isLoading}
-                            className={cn(
-                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
-                                "bg-primary-50 dark:bg-secondary-800/50",
-                                "border-primary-200 dark:border-secondary-700",
-                                "text-primary-900 dark:text-primary-50",
-                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
-                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
-                                "disabled:opacity-50 disabled:cursor-not-allowed"
-                            )}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Min 6 characters"
+                                required
+                                disabled={isLoading}
+                                className={cn(
+                                    "w-full px-4 py-3.5 border-[2px] rounded-[12px] transition-all duration-200 outline-none font-medium pr-10",
+                                    "bg-primary-50 dark:bg-secondary-800/50",
+                                    "border-primary-200 dark:border-secondary-700",
+                                    "text-primary-900 dark:text-primary-50",
+                                    "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                    "focus:border-[2px] focus:border-primary-900 dark:focus:border-primary-100 focus:ring-0",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                                )}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 transition-colors"
+                            >
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                            </button>
+                        </div>
                     </div>
 
                     <div className="relative group">
                         <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
                             Confirm Password
                         </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Re-enter password"
-                            required
-                            disabled={isLoading}
-                            className={cn(
-                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
-                                "bg-primary-50 dark:bg-secondary-800/50",
-                                "border-primary-200 dark:border-secondary-700",
-                                "text-primary-900 dark:text-primary-50",
-                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
-                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
-                                "disabled:opacity-50 disabled:cursor-not-allowed"
-                            )}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                id="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Re-enter password"
+                                required
+                                disabled={isLoading}
+                                className={cn(
+                                    "w-full px-4 py-3.5 border-[2px] rounded-[12px] transition-all duration-200 outline-none font-medium pr-10",
+                                    "bg-primary-50 dark:bg-secondary-800/50",
+                                    "border-primary-200 dark:border-secondary-700",
+                                    "text-primary-900 dark:text-primary-50",
+                                    "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                    "focus:border-[2px] focus:border-primary-900 dark:focus:border-primary-100 focus:ring-0",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                                )}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 transition-colors"
+                            >
+                                <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+                            </button>
+                        </div>
                     </div>
 
                     <button
