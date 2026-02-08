@@ -1,6 +1,6 @@
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PopularJobtype } from "../../landingpage/LandingPageUppersec/UpperSection/UpperSectionType/upperSecTypeParent";
+import { PopularJobtype } from "../../modules/landingpage/LandingPageUppersec/UpperSection/UpperSectionType/upperSecTypeParent";
 import { Imagepaths } from './../../assets/Global_Need_files/ImagesPaths.js'
 import { cn } from "../../lib/utils";
 
