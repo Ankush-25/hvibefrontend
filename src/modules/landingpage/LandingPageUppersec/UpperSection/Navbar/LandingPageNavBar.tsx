@@ -262,14 +262,14 @@ export function LandingNavBar() {
           <div className="flex gap-4 items-center">
             <button
               onClick={() => navigate("/login")}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border border-gray-300 dark:border-gray-500 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white hover:-translate-y-[1px]"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border border-primary-200 dark:border-secondary-700 bg-transparent text-primary-700 dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-secondary-800 hover:text-primary-900 dark:hover:text-primary-50 hover:-translate-y-[1px]"
             >
               <FontAwesomeIcon icon={faSignInAlt} className="text-sm" />
               Login
             </button>
             <button
               onClick={() => navigate("/signup")}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border border-transparent bg-primary-500 text-white hover:bg-primary-600 hover:-translate-y-[1px] hover:shadow-lg"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border border-primary-200 dark:border-secondary-700 bg-primary-900 dark:bg-primary-50 text-primary-50 dark:text-primary-900 hover:bg-primary-800 dark:hover:bg-primary-200 hover:-translate-y-[1px] hover:shadow-lg"
             >
               <FontAwesomeIcon icon={faUserPlus} className="text-sm" />
               Sign Up

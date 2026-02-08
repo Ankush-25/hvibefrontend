@@ -67,195 +67,184 @@ function SignUpPage({ }: SignupProps) {
 
     return (
         <div className={cn(
-            "flex flex-col justify-center items-center min-h-screen gap-5 font-sans",
-            "bg-gradient-to-br from-secondary-950 to-secondary-900 p-5"
+            "flex flex-col justify-center items-center min-h-screen gap-5 font-sans transition-colors duration-300",
+            "bg-primary-50 dark:bg-secondary-950 p-5"
         )}>
             <div className="text-center">
                 <img
-                    className="w-32 h-32 mx-auto mb-4"
+                    className="w-24 h-24 mx-auto mb-4 object-contain"
                     src={Imagepaths.HiringstoreslogoPath}
                     alt="HiringStores Logo"
                 />
-                <h2 className="text-3xl font-bold text-white mb-2">Create Your Account</h2>
-                <p className="text-gray-400">Join our community today</p>
+                <h2 className="text-3xl font-bold text-primary-900 dark:text-primary-50 mb-2">Create Account</h2>
+                <p className="text-primary-500 dark:text-primary-400">Join our community today</p>
             </div>
 
             {errorMessage && (
-                <div className="bg-error-100 border border-error-400 text-error-700 px-4 py-3 rounded-lg max-w-md">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-[12px] max-w-md w-full text-center text-sm font-medium">
                     {errorMessage}
                 </div>
             )}
 
-            <form className={cn(
-                "p-10 rounded-2xl shadow-strong flex flex-col gap-7 w-full max-w-md",
-                "bg-secondary-800/65 border border-purple-600/20 backdrop-blur-md"
-            )} onSubmit={handleSubmit}>
-                <div className="relative">
-                    <input
-                        type="text"
-                        id="Name"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder=" "
-                        required
-                        disabled={isLoading}
+            <div className={cn(
+                "p-8 rounded-[24px] shadow-xl flex flex-col gap-6 w-full max-w-md transition-all duration-300",
+                "bg-white dark:bg-secondary-900 border border-primary-100 dark:border-secondary-800"
+            )}>
+                {/* User Type Toggle */}
+                <div className="flex p-1 bg-primary-50 dark:bg-secondary-800 rounded-[12px] border border-primary-200 dark:border-secondary-700">
+                    <button
+                        type="button"
+                        onClick={() => setTypeOfUser('job_seeker')}
                         className={cn(
-                            "w-full px-4 py-4 border border-secondary-600 bg-secondary-800/80 rounded-lg",
-                            "text-white placeholder-transparent focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                            "peer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                        )}
-                    />
-                    <label
-                        htmlFor="Name"
-                        className={cn(
-                            "absolute left-4 top-4 px-1 text-gray-400 font-medium pointer-events-none transition-all duration-200 z-10",
-                            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400",
-                            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary-500 peer-focus:bg-secondary-800"
+                            "flex-1 py-2 text-sm font-semibold rounded-[8px] transition-all duration-200",
+                            typeOfUser === 'job_seeker'
+                                ? "bg-white dark:bg-secondary-700 text-primary-900 dark:text-primary-50 shadow-sm"
+                                : "text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
                         )}
                     >
-                        User Name
-                    </label>
-                </div>
-
-                <div className="relative">
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder=" "
-                        required
-                        disabled={isLoading}
+                        Job Seeker
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setTypeOfUser('employer')}
                         className={cn(
-                            "w-full px-4 py-4 border border-secondary-600 bg-secondary-800/80 rounded-lg",
-                            "text-white placeholder-transparent focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                            "peer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                        )}
-                    />
-                    <label
-                        htmlFor="email"
-                        className={cn(
-                            "absolute left-4 top-4 px-1 text-gray-400 font-medium pointer-events-none transition-all duration-200 z-10",
-                            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400",
-                            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary-500 peer-focus:bg-secondary-800"
+                            "flex-1 py-2 text-sm font-semibold rounded-[8px] transition-all duration-200",
+                            typeOfUser === 'employer'
+                                ? "bg-white dark:bg-secondary-700 text-primary-900 dark:text-primary-50 shadow-sm"
+                                : "text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
                         )}
                     >
-                        Email Address
-                    </label>
+                        Employer
+                    </button>
                 </div>
 
-                <div className="space-y-3">
-                    <p className="text-gray-400 text-sm font-medium">Register as:</p>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                name="userType"
-                                value="job_seeker"
-                                checked={typeOfUser === "job_seeker"}
-                                onChange={() => setTypeOfUser("job_seeker")}
-                                disabled={isLoading}
-                                className="w-4 h-4 text-primary-500 focus:ring-primary-500 disabled:opacity-50"
-                            />
-                            <span className="text-gray-300">Job Seeker</span>
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <div className="relative group">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
+                            Full Name
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                name="userType"
-                                value="employer"
-                                checked={typeOfUser === "employer"}
-                                onChange={() => setTypeOfUser("employer")}
-                                disabled={isLoading}
-                                className="w-4 h-4 text-primary-500 focus:ring-primary-500 disabled:opacity-50"
-                            />
-                            <span className="text-gray-300">Employer</span>
-                        </label>
+                        <input
+                            type="text"
+                            id="Name"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="John Doe"
+                            required
+                            disabled={isLoading}
+                            className={cn(
+                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "bg-primary-50 dark:bg-secondary-800/50",
+                                "border-primary-200 dark:border-secondary-700",
+                                "text-primary-900 dark:text-primary-50",
+                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "disabled:opacity-50 disabled:cursor-not-allowed"
+                            )}
+                        />
                     </div>
-                </div>
 
-                <div className="relative">
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder=" "
-                        required
+                    <div className="relative group">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="name@example.com"
+                            required
+                            disabled={isLoading}
+                            className={cn(
+                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "bg-primary-50 dark:bg-secondary-800/50",
+                                "border-primary-200 dark:border-secondary-700",
+                                "text-primary-900 dark:text-primary-50",
+                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "disabled:opacity-50 disabled:cursor-not-allowed"
+                            )}
+                        />
+                    </div>
+
+                    <div className="relative group">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Min 6 characters"
+                            required
+                            disabled={isLoading}
+                            className={cn(
+                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "bg-primary-50 dark:bg-secondary-800/50",
+                                "border-primary-200 dark:border-secondary-700",
+                                "text-primary-900 dark:text-primary-50",
+                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "disabled:opacity-50 disabled:cursor-not-allowed"
+                            )}
+                        />
+                    </div>
+
+                    <div className="relative group">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-primary-500 dark:text-primary-400 mb-1.5 block ml-1">
+                            Confirm Password
+                        </label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Re-enter password"
+                            required
+                            disabled={isLoading}
+                            className={cn(
+                                "w-full px-4 py-3.5 border rounded-[12px] transition-all duration-200 outline-none font-medium",
+                                "bg-primary-50 dark:bg-secondary-800/50",
+                                "border-primary-200 dark:border-secondary-700",
+                                "text-primary-900 dark:text-primary-50",
+                                "placeholder:text-primary-300 dark:placeholder:text-secondary-500",
+                                "focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 dark:focus:ring-primary-400/10",
+                                "disabled:opacity-50 disabled:cursor-not-allowed"
+                            )}
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
                         disabled={isLoading}
                         className={cn(
-                            "w-full px-4 py-4 border border-secondary-600 bg-secondary-800/80 rounded-lg",
-                            "text-white placeholder-transparent focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                            "peer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                        )}
-                    />
-                    <label
-                        htmlFor="password"
-                        className={cn(
-                            "absolute left-4 top-4 px-1 text-gray-400 font-medium pointer-events-none transition-all duration-200 z-10",
-                            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400",
-                            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary-500 peer-focus:bg-secondary-800"
+                            "mt-4 w-full px-6 py-3.5 rounded-[50px] font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-md hover:shadow-lg transform active:scale-[0.98]",
+                            "bg-primary-900 dark:bg-primary-50 text-primary-50 dark:text-primary-900",
+                            "hover:bg-primary-800 dark:hover:bg-primary-200",
+                            "disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                         )}
                     >
-                        Password
-                    </label>
+                        {isLoading ? "Creating account..." : "Sign Up"}
+                    </button>
+                </form>
+
+                <div className="text-center pt-2 border-t border-primary-100 dark:border-secondary-800">
+                    <p className="text-primary-500 dark:text-primary-400 text-sm">
+                        Already have an account?
+                        <a
+                            href="/login"
+                            className="text-primary-900 dark:text-primary-50 font-bold ml-1 hover:underline transition-all"
+                        >
+                            Login
+                        </a>
+                    </p>
                 </div>
-
-                <div className="relative">
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder=" "
-                        required
-                        disabled={isLoading}
-                        className={cn(
-                            "w-full px-4 py-4 border border-secondary-600 bg-secondary-800/80 rounded-lg",
-                            "text-white placeholder-transparent focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
-                            "peer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                        )}
-                    />
-                    <label
-                        htmlFor="confirmPassword"
-                        className={cn(
-                            "absolute left-4 top-4 px-1 text-gray-400 font-medium pointer-events-none transition-all duration-200 z-10",
-                            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400",
-                            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary-500 peer-focus:bg-secondary-800"
-                        )}
-                    >
-                        Confirm Password
-                    </label>
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={cn(
-                        "relative px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-lg",
-                        "hover:from-primary-600 hover:to-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-secondary-900",
-                        "disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 hover:shadow-medium"
-                    )}
-                >
-                    <span>{isLoading ? "Creating account..." : "Sign Up"}</span>
-                </button>
-            </form>
-
-            <div className="text-center">
-                <p className="text-gray-400 text-sm">
-                    Already have an account?
-                    <a
-                        href="/login"
-                        className="text-primary-400 hover:text-primary-300 font-medium ml-1 transition-colors duration-200"
-                    >
-                        Login
-                    </a>
-                </p>
             </div>
 
-            <div className="text-center">
-                <p className="text-gray-500 text-sm italic">Elevate your hiring experience</p>
-            </div>
+            <p className="text-primary-400 dark:text-primary-600 text-xs mt-4">
+                © 2024 HiringStores. All rights reserved.
+            </p>
         </div>
     );
 }
